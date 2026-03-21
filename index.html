@@ -842,9 +842,6 @@ const hkZones = [
   { icon: "🔙", cat: "Rücken", text: "Von den Schultern bis zum unteren Rücken – welche Stelle lässt Schauer?" },
 ];
 
-// ══════════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════════
 let currentPosition = null;
 let todMode = 'wahrheit';
 let usedTruths = [], usedDares = [];
@@ -854,9 +851,6 @@ let hkPlayer = 1;
 let wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
 let selectedChallenge = null;
 
-// ══════════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -867,18 +861,12 @@ function goHome() {
   showScreen('home');
 }
 
-// ══════════════════════════════════════════════
-//  SPLASH
-// ══════════════════════════════════════════════
 function goHome_() { showScreen('home'); }
 function goHome() { stopTimer(); showScreen('home'); }
 
 window.goHome = goHome;
 window.showScreen = showScreen;
 
-// ══════════════════════════════════════════════
-//  ROULETTE
-// ══════════════════════════════════════════════
 function spinRoulette() {
   const btn = document.getElementById('spin-btn');
   const emoji = document.getElementById('r-emoji');
@@ -927,9 +915,6 @@ function declinePosition() {
   openOverlay('punish-overlay');
 }
 
-// ══════════════════════════════════════════════
-//  TRUTH OR DARE
-// ══════════════════════════════════════════════
 function setTodMode(mode) {
   todMode = mode;
   document.getElementById('tab-truth').classList.toggle('active', mode === 'wahrheit');
@@ -964,9 +949,6 @@ function nextTod() {
   setTimeout(() => { text.style.animation = 'fadeUp .3s ease'; }, 10);
 }
 
-// ══════════════════════════════════════════════
-//  CHALLENGES
-// ══════════════════════════════════════════════
 function newChallenge() {
   stopTimer();
   const ch = challenges[Math.floor(Math.random() * challenges.length)];
@@ -1020,9 +1002,6 @@ function stopTimer() {
   document.getElementById('timer-display').style.color = 'var(--cream)';
 }
 
-// ══════════════════════════════════════════════
-//  DICE
-// ══════════════════════════════════════════════
 const diceFaces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
 
 function selectDiceCat(i) {
@@ -1052,9 +1031,6 @@ function rollDice() {
   }, 60);
 }
 
-// ══════════════════════════════════════════════
-//  WISHBOX
-// ══════════════════════════════════════════════
 const levelColors = { zärtlich: '#c86090', heiß: '#c84020', wild: '#8020c8' };
 const levelIcons = { zärtlich: '💕', heiß: '🔥', wild: '🌋' };
 const whoLabels = { both: 'Für Beide', er: 'Von Ihm', sie: 'Von Ihr' };
@@ -1105,9 +1081,6 @@ function drawWish() {
   openOverlay('wish-overlay');
 }
 
-// ══════════════════════════════════════════════
-//  HEISS KALT
-// ══════════════════════════════════════════════
 function setHkPlayer(n) {
   hkPlayer = n;
   document.getElementById('hk-p1').classList.toggle('active', n === 1);
@@ -1130,9 +1103,7 @@ function hkFeedback(msg) {
   setTimeout(() => { el.style.animation = 'fadeUp .25s ease'; }, 10);
 }
 
-// ══════════════════════════════════════════════
-//  OVERLAYS
-// ══════════════════════════════════════════════
+
 function openOverlay(id) {
   document.getElementById(id).classList.add('active');
 }
@@ -1140,9 +1111,6 @@ function closeOverlay(id) {
   document.getElementById(id).classList.remove('active');
 }
 
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
 renderWishes();
 
 // PWA Install hint
