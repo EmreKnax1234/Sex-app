@@ -684,7 +684,7 @@ html, body {
       <div class="mode-name">Wahrheit oder Pflicht</div>
       <div class="mode-desc">Enthüllungen & Aufgaben</div>
     </div>
-    <div class="mode-card" style="--card-accent:#2dd4a0;" onclick="showScreen('challenges')">
+    <div class="mode-card" style="--card-accent:#2dd4a0;" onclick="openChallenges()">
       <span class="mode-icon">⏱️</span>
       <div class="mode-name">Herausforderungen</div>
       <div class="mode-desc">Timed Challenges</div>
@@ -768,6 +768,7 @@ html, body {
   <div class="challenge-body">
     <div class="challenge-card">
       <span class="challenge-icon" id="ch-icon">⏱️</span>
+      <div class="challenge-for male" id="ch-turn-badge" style="display:none;"></div>
       <div class="challenge-for both" id="ch-for" style="display:none;"></div>
       <div class="challenge-name" id="ch-name">Bereit?</div>
       <div class="challenge-text" id="ch-text">Drücke auf „Neue Herausforderung" um zu starten!</div>
@@ -1639,7 +1640,9 @@ const positionPool = new SmartPool(positions);
 const punishPool = new SmartPool(punishments);
 const hkPool = new SmartPool(hkZones);
 const stripPool = new SmartPool(stripQuestions);
-const challengePool = new SmartPool(challenges);
+const challengePoolMann = new SmartPool(challenges.filter(c => c.for === 'mann' || c.for === 'both'));
+const challengePoolFrau = new SmartPool(challenges.filter(c => c.for === 'frau' || c.for === 'both'));
+let challengeTurn = 'mann'; // whose turn it is
 
 let truthPool, darePool;
 function rebuildTodPools() {
@@ -1684,6 +1687,7 @@ function showScreen(id) {
   document.getElementById(id).scrollTop = 0;
 }
 function goHome() { stopTimer(); showScreen('home'); }
+function openChallenges() { challengeTurn = 'mann'; showScreen('challenges'); updateChallengeTurnBadge(); }
 function openTruthDare() { rebuildTodPools(); showScreen('truthdare'); }
 
 // ══════════════════════════════════════════════════════════════════
@@ -1788,14 +1792,29 @@ function nextTod() {
 let timerInterval = null, timerSeconds = 0, timerRunning = false;
 let selectedChallenge = null;
 
+function updateChallengeTurnBadge() {
+  const turnEl = document.getElementById('ch-turn-badge');
+  if (!turnEl) return;
+  const name = challengeTurn === 'mann' ? mannName() : frauName();
+  const cls = challengeTurn === 'mann' ? 'male' : 'female';
+  turnEl.className = 'challenge-for ' + cls;
+  turnEl.style.display = 'inline-block';
+  turnEl.textContent = '🎯 ' + name + ' ist dran';
+}
+
 function newChallenge() {
   stopTimer();
-  const ch = challengePool.next();
+  const pool = challengeTurn === 'mann' ? challengePoolMann : challengePoolFrau;
+  const ch = pool.next();
   selectedChallenge = ch;
   document.getElementById('ch-icon').textContent = ch.icon;
   document.getElementById('ch-name').textContent = ch.name;
   document.getElementById('ch-text').textContent = tpl(ch.text);
-  
+
+  // toggle turn for next time
+  challengeTurn = challengeTurn === 'mann' ? 'frau' : 'mann';
+  updateChallengeTurnBadge();
+
   const forEl = document.getElementById('ch-for');
   forEl.style.display = 'inline-block';
   forEl.className = 'challenge-for ' + forClass(ch.for);
