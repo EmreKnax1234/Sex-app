@@ -13,460 +13,607 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
 
 <style>
-  :root {
-    --bg: #080409;
-    --bg2: #110810;
-    --bg3: #1a0d18;
-    --card: #1e1020;
-    --card2: #261428;
-    --accent: #c9204a;
-    --accent2: #e8355c;
-    --gold: #d4a84b;
-    --gold2: #f0c96a;
-    --cream: #f5e8d0;
-    --muted: #8a6a7a;
-    --text: #f0dce8;
-    --text2: #c4a0b4;
-    --green: #2dd4a0;
-    --radius: 18px;
-    --shadow: 0 8px 40px rgba(0,0,0,0.6);
-  }
+:root {
+  --bg: #080409;
+  --bg2: #110810;
+  --bg3: #1a0d18;
+  --card: #1e1020;
+  --card2: #261428;
+  --accent: #c9204a;
+  --accent2: #e8355c;
+  --gold: #d4a84b;
+  --gold2: #f0c96a;
+  --cream: #f5e8d0;
+  --muted: #8a6a7a;
+  --text: #f0dce8;
+  --text2: #c4a0b4;
+  --green: #2dd4a0;
+  --blue: #6488ea;
+  --purple: #a064ea;
+  --radius: 18px;
+  --shadow: 0 8px 40px rgba(0,0,0,.6);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  height: 100%; width: 100%; overflow: hidden;
+  background: var(--bg);
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  color: var(--text);
+  user-select: none;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* ─── SCREENS ─── */
+.screen {
+  position: fixed; inset: 0;
+  display: none; flex-direction: column;
+  overflow-y: auto; overflow-x: hidden;
+}
+.screen.active { display: flex; }
 
-  html, body {
-    height: 100%; width: 100%; overflow: hidden;
-    background: var(--bg);
-    font-family: 'Cormorant Garamond', Georgia, serif;
-    color: var(--text);
-    user-select: none;
-  }
+/* ─── KEYFRAMES ─── */
+@keyframes fadeUp { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:none; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes slideUp { from { transform:translateY(100%); } to { transform:none; } }
+@keyframes pulse { 0%,100% { filter:drop-shadow(0 0 20px rgba(201,32,74,.4)); } 50% { filter:drop-shadow(0 0 40px rgba(201,32,74,.9)); } }
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes diceBounce { 0% { transform:scale(1) rotate(0deg); } 30% { transform:scale(1.3) rotate(-20deg); } 60% { transform:scale(.9) rotate(10deg); } 100% { transform:scale(1) rotate(0deg); } }
+@keyframes shimmer { 0% { background-position:-200% center; } 100% { background-position:200% center; } }
+@keyframes nameGlow { 0%,100% { text-shadow:0 0 8px rgba(212,168,75,.3); } 50% { text-shadow:0 0 20px rgba(212,168,75,.8); } }
 
-  /* ─── SCREENS ─── */
-  .screen {
-    position: fixed; inset: 0;
-    display: none; flex-direction: column;
-    overflow-y: auto; overflow-x: hidden;
-  }
-  .screen.active { display: flex; }
+/* ─── SPLASH ─── */
+#splash {
+  justify-content: center; align-items: center;
+  background: radial-gradient(ellipse at 50% 40%, #2a0c22 0%, #080409 70%);
+}
+.splash-inner { text-align:center; animation:fadeUp .8s ease; }
+.splash-logo {
+  font-size:5rem; margin-bottom:.5rem;
+  filter:drop-shadow(0 0 30px rgba(201,32,74,.6));
+  animation:pulse 3s infinite;
+}
+.splash-title {
+  font-family:'Playfair Display',serif;
+  font-size:2.4rem; letter-spacing:.12em;
+  color:var(--gold); margin-bottom:.3rem;
+}
+.splash-sub {
+  font-size:1.1rem; color:var(--muted);
+  letter-spacing:.25em; text-transform:uppercase;
+  margin-bottom:2.5rem;
+}
+.btn-enter {
+  background:linear-gradient(135deg, var(--accent), #8b0f2f);
+  color:#fff; border:none; padding:1rem 3rem;
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem; letter-spacing:.15em;
+  border-radius:50px; cursor:pointer;
+  box-shadow:0 4px 30px rgba(201,32,74,.5);
+  transition:transform .15s, box-shadow .15s;
+}
+.btn-enter:active { transform:scale(.96); }
+.age-note { margin-top:1.2rem; font-size:.85rem; color:var(--muted); }
 
-  /* ─── SPLASH ─── */
-  #splash {
-    justify-content: center; align-items: center;
-    background: radial-gradient(ellipse at 50% 40%, #2a0c22 0%, #080409 70%);
-  }
-  .splash-inner { text-align: center; animation: fadeUp .8s ease; }
-  .splash-logo {
-    font-size: 5rem; margin-bottom: .5rem;
-    filter: drop-shadow(0 0 30px rgba(201,32,74,.6));
-    animation: pulse 3s infinite;
-  }
-  .splash-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2.4rem; letter-spacing: .12em;
-    color: var(--gold); margin-bottom: .3rem;
-  }
-  .splash-sub {
-    font-size: 1.1rem; color: var(--muted);
-    letter-spacing: .25em; text-transform: uppercase;
-    margin-bottom: 2.5rem;
-  }
-  .btn-enter {
-    background: linear-gradient(135deg, var(--accent), #8b0f2f);
-    color: #fff; border: none; padding: 1rem 3rem;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; letter-spacing: .15em;
-    border-radius: 50px; cursor: pointer;
-    box-shadow: 0 4px 30px rgba(201,32,74,.5);
-    transition: transform .15s, box-shadow .15s;
-  }
-  .btn-enter:active { transform: scale(.96); }
-  .age-note {
-    margin-top: 1.2rem; font-size: .85rem;
-    color: var(--muted); letter-spacing: .05em;
-  }
+/* ─── SETUP SCREEN ─── */
+#setup {
+  background:radial-gradient(ellipse at 50% 30%, #1a0520 0%, #080409 70%);
+  justify-content:flex-start; align-items:center;
+  padding:3rem 1.5rem 2rem;
+}
+.setup-inner { width:100%; max-width:400px; animation:fadeUp .5s ease; }
+.setup-title {
+  font-family:'Playfair Display',serif;
+  font-size:2rem; color:var(--gold);
+  text-align:center; margin-bottom:.4rem;
+}
+.setup-sub {
+  text-align:center; color:var(--muted);
+  font-size:.95rem; font-style:italic;
+  margin-bottom:2rem; letter-spacing:.05em;
+}
+.setup-player {
+  background:var(--card);
+  border:1px solid rgba(212,168,75,.2);
+  border-radius:20px; padding:1.4rem;
+  margin-bottom:1.2rem;
+}
+.setup-player-header {
+  display:flex; align-items:center; gap:.8rem;
+  margin-bottom:1rem;
+}
+.setup-player-icon { font-size:2rem; }
+.setup-player-label {
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem; color:var(--cream);
+}
+.setup-name-input {
+  width:100%; background:rgba(255,255,255,.06);
+  border:1px solid rgba(212,168,75,.25);
+  border-radius:12px; padding:.75rem 1rem;
+  color:var(--cream); font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem; outline:none;
+  transition:border-color .2s;
+  margin-bottom:.8rem;
+}
+.setup-name-input:focus { border-color:rgba(212,168,75,.6); }
+.setup-name-input::placeholder { color:var(--muted); }
+.gender-toggle { display:flex; gap:.6rem; }
+.gender-btn {
+  flex:1; padding:.65rem;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:10px; color:var(--muted);
+  font-family:'Cormorant Garamond',serif;
+  font-size:.95rem; cursor:pointer;
+  transition:all .2s; text-align:center;
+}
+.gender-btn.active-m {
+  background:rgba(100,136,234,.15);
+  border-color:rgba(100,136,234,.5);
+  color:var(--blue);
+}
+.gender-btn.active-f {
+  background:rgba(201,32,74,.12);
+  border-color:rgba(201,32,74,.4);
+  color:var(--accent2);
+}
+.btn-start-game {
+  width:100%; padding:1.1rem;
+  background:linear-gradient(135deg, var(--gold), #8a5a10);
+  border:none; border-radius:50px;
+  color:#000; font-family:'Playfair Display',serif;
+  font-size:1.15rem; letter-spacing:.12em;
+  cursor:pointer; margin-top:1rem;
+  box-shadow:0 4px 25px rgba(212,168,75,.4);
+  transition:transform .15s;
+}
+.btn-start-game:active { transform:scale(.97); }
 
-  /* ─── HOME ─── */
-  #home { background: var(--bg); }
-  .home-header {
-    padding: 3.5rem 1.5rem 1rem;
-    background: linear-gradient(180deg, #1a0518 0%, transparent 100%);
-    text-align: center;
-  }
-  .home-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem; color: var(--gold);
-    letter-spacing: .08em;
-  }
-  .home-sub { color: var(--muted); font-size: .95rem; margin-top: .2rem; }
-  .modes-grid {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1rem; padding: 1.5rem;
-  }
-  .mode-card {
-    background: var(--card);
-    border: 1px solid rgba(201,32,74,.18);
-    border-radius: var(--radius);
-    padding: 1.5rem 1rem 1.2rem;
-    text-align: center; cursor: pointer;
-    transition: transform .15s, box-shadow .15s, border-color .15s;
-    position: relative; overflow: hidden;
-  }
-  .mode-card::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 3px;
-    background: var(--card-accent, var(--accent));
-  }
-  .mode-card:active { transform: scale(.96); }
-  .mode-card:hover { border-color: rgba(201,32,74,.5); box-shadow: 0 6px 30px rgba(0,0,0,.5); }
-  .mode-icon { font-size: 2.4rem; margin-bottom: .6rem; display: block; }
-  .mode-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem; color: var(--cream);
-    margin-bottom: .2rem;
-  }
-  .mode-desc { font-size: .78rem; color: var(--muted); line-height: 1.4; }
+/* ─── HOME ─── */
+#home { background:var(--bg); }
+.home-header {
+  padding:2.5rem 1.5rem .8rem;
+  background:linear-gradient(180deg, #1a0518 0%, transparent 100%);
+  text-align:center;
+}
+.home-players {
+  display:flex; justify-content:center; gap:1rem;
+  margin-bottom:.4rem;
+}
+.home-player-badge {
+  display:flex; align-items:center; gap:.4rem;
+  padding:.35rem .9rem; border-radius:50px;
+  font-size:.9rem;
+}
+.home-player-badge.male {
+  background:rgba(100,136,234,.15);
+  border:1px solid rgba(100,136,234,.3);
+  color:var(--blue);
+}
+.home-player-badge.female {
+  background:rgba(201,32,74,.12);
+  border:1px solid rgba(201,32,74,.3);
+  color:var(--accent2);
+}
+.home-title {
+  font-family:'Playfair Display',serif;
+  font-size:1.6rem; color:var(--gold);
+  letter-spacing:.06em; margin-bottom:.2rem;
+}
+.home-sub { color:var(--muted); font-size:.9rem; }
+.modes-grid {
+  display:grid; grid-template-columns:1fr 1fr;
+  gap:1rem; padding:1.2rem;
+}
+.mode-card {
+  background:var(--card);
+  border:1px solid rgba(201,32,74,.18);
+  border-radius:var(--radius);
+  padding:1.4rem 1rem 1.1rem;
+  text-align:center; cursor:pointer;
+  transition:transform .15s, box-shadow .15s, border-color .15s;
+  position:relative; overflow:hidden;
+}
+.mode-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--card-accent, var(--accent));
+}
+.mode-card:active { transform:scale(.95); }
+.mode-card:hover { border-color:rgba(201,32,74,.5); box-shadow:0 6px 30px rgba(0,0,0,.5); }
+.mode-icon { font-size:2.2rem; margin-bottom:.5rem; display:block; }
+.mode-name { font-family:'Playfair Display',serif; font-size:.95rem; color:var(--cream); margin-bottom:.2rem; }
+.mode-desc { font-size:.75rem; color:var(--muted); line-height:1.4; }
+.home-footer { padding:.8rem 1.5rem 2rem; display:flex; gap:.8rem; }
+.btn-settings {
+  flex:1; padding:.7rem;
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+  border-radius:50px; color:var(--muted);
+  font-family:'Playfair Display',serif; font-size:.85rem;
+  cursor:pointer;
+}
 
-  /* ─── TOP BAR ─── */
-  .top-bar {
-    display: flex; align-items: center;
-    padding: 3rem 1.2rem .8rem;
-    background: linear-gradient(180deg, rgba(26,5,24,.95) 0%, transparent 100%);
-    position: sticky; top: 0; z-index: 10;
-  }
-  .btn-back {
-    background: rgba(255,255,255,.08); border: none;
-    color: var(--text); padding: .5rem .9rem;
-    border-radius: 50px; cursor: pointer; font-size: .9rem;
-    transition: background .15s;
-  }
-  .btn-back:active { background: rgba(255,255,255,.15); }
-  .top-title {
-    flex: 1; text-align: center;
-    font-family: 'Playfair Display', serif;
-    font-size: 1.2rem; color: var(--gold);
-    letter-spacing: .08em;
-  }
-  .top-spacer { width: 3rem; }
+/* ─── TOP BAR ─── */
+.top-bar {
+  display:flex; align-items:center;
+  padding:2.8rem 1.2rem .7rem;
+  background:linear-gradient(180deg, rgba(26,5,24,.95) 0%, transparent 100%);
+  position:sticky; top:0; z-index:10;
+  flex-shrink:0;
+}
+.btn-back {
+  background:rgba(255,255,255,.08); border:none;
+  color:var(--text); padding:.5rem .9rem;
+  border-radius:50px; cursor:pointer; font-size:.9rem;
+  transition:background .15s;
+}
+.btn-back:active { background:rgba(255,255,255,.15); }
+.top-title {
+  flex:1; text-align:center;
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem; color:var(--gold); letter-spacing:.06em;
+}
+.top-spacer { width:3rem; }
+.top-players {
+  display:flex; gap:.4rem; align-items:center;
+}
+.top-player-dot {
+  font-size:.7rem; padding:.2rem .6rem;
+  border-radius:50px;
+}
+.top-player-dot.male { background:rgba(100,136,234,.2); color:var(--blue); }
+.top-player-dot.female { background:rgba(201,32,74,.15); color:var(--accent2); }
 
-  /* ─── ROULETTE ─── */
-  #roulette { background: radial-gradient(ellipse at 50% 0%, #1f0820 0%, var(--bg) 65%); }
-  .roulette-body { padding: 0 1.5rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
-  .spin-area {
-    width: 100%; background: var(--card);
-    border: 1px solid rgba(201,32,74,.3);
-    border-radius: 24px; padding: 2rem 1.5rem;
-    text-align: center; position: relative;
-    overflow: hidden;
-    box-shadow: var(--shadow);
-  }
-  .spin-area::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse at 50% -20%, rgba(201,32,74,.15), transparent 70%);
-    pointer-events: none;
-  }
-  .position-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.9rem; color: var(--cream);
-    margin-bottom: .4rem;
-  }
-  .position-emoji { font-size: 4.5rem; display: block; margin: .5rem 0 1rem; }
-  .position-hint { font-size: 1rem; color: var(--text2); font-style: italic; line-height: 1.5; }
-  .spin-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--accent), #7a0f29);
-    border: none; color: #fff; padding: 1.1rem;
-    border-radius: 50px; font-family: 'Playfair Display', serif;
-    font-size: 1.1rem; letter-spacing: .1em;
-    cursor: pointer; box-shadow: 0 4px 20px rgba(201,32,74,.4);
-    transition: transform .15s; margin-top: .5rem;
-  }
-  .spin-btn:active { transform: scale(.97); }
-  .action-row { display: flex; gap: 1rem; width: 100%; }
-  .btn-accept, .btn-decline {
-    flex: 1; padding: 1rem;
-    border: none; border-radius: 50px;
-    font-family: 'Playfair Display', serif;
-    font-size: 1rem; cursor: pointer; letter-spacing: .05em;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .btn-accept {
-    background: linear-gradient(135deg, #1a7a4a, #0d5a33);
-    color: #fff; box-shadow: 0 4px 20px rgba(29,180,100,.3);
-  }
-  .btn-decline {
-    background: linear-gradient(135deg, #7a1a2a, #4a0d1a);
-    color: #fff; box-shadow: 0 4px 20px rgba(180,29,60,.3);
-  }
-  .btn-accept:active, .btn-decline:active { transform: scale(.96); }
+/* ─── SECTION LABEL ─── */
+.section-label {
+  font-size:.75rem; text-transform:uppercase;
+  letter-spacing:.2em; color:var(--muted);
+  padding:0 1.5rem; margin:.5rem 0 .3rem;
+}
 
-  /* ─── DETAIL OVERLAY ─── */
-  .overlay {
-    position: fixed; inset: 0; z-index: 100;
-    background: rgba(0,0,0,.85);
-    display: none; flex-direction: column;
-    justify-content: flex-end;
-    animation: fadeIn .25s;
-  }
-  .overlay.active { display: flex; }
-  .overlay-card {
-    background: linear-gradient(160deg, #2a1228, #1a0820);
-    border-radius: 28px 28px 0 0;
-    padding: 2rem 1.5rem 3rem;
-    border-top: 2px solid rgba(212,168,75,.4);
-    max-height: 88vh; overflow-y: auto;
-    animation: slideUp .3s ease;
-  }
-  .overlay-emoji { font-size: 5rem; text-align: center; display: block; margin-bottom: .8rem; }
-  .overlay-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 2rem; color: var(--gold);
-    text-align: center; margin-bottom: 1rem;
-  }
-  .overlay-desc {
-    font-size: 1.05rem; color: var(--text2);
-    line-height: 1.8; text-align: center;
-    margin-bottom: 1.5rem;
-  }
-  .overlay-tips { background: rgba(255,255,255,.04); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; }
-  .tip-label { font-size: .75rem; text-transform: uppercase; letter-spacing: .2em; color: var(--gold); margin-bottom: .5rem; }
-  .tip-text { font-size: .95rem; color: var(--text2); line-height: 1.6; }
-  .btn-close-overlay {
-    width: 100%; padding: 1rem; border: none;
-    background: rgba(255,255,255,.08); color: var(--text);
-    border-radius: 50px; font-family: 'Playfair Display', serif;
-    font-size: 1rem; cursor: pointer; letter-spacing: .08em;
-  }
+/* ─── ROULETTE ─── */
+#roulette { background:radial-gradient(ellipse at 50% 0%, #1f0820 0%, var(--bg) 65%); }
+.roulette-body { padding:0 1.5rem 2rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+.spin-area {
+  width:100%; background:var(--card);
+  border:1px solid rgba(201,32,74,.3);
+  border-radius:24px; padding:1.8rem 1.5rem;
+  text-align:center; position:relative; overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.spin-area::after {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse at 50% -20%, rgba(201,32,74,.12), transparent 70%);
+  pointer-events:none;
+}
+.position-name { font-family:'Playfair Display',serif; font-size:1.8rem; color:var(--cream); margin-bottom:.3rem; }
+.position-emoji { font-size:4rem; display:block; margin:.4rem 0 .8rem; }
+.position-hint { font-size:1rem; color:var(--text2); font-style:italic; line-height:1.5; }
+.spin-btn {
+  width:100%;
+  background:linear-gradient(135deg, var(--accent), #7a0f29);
+  border:none; color:#fff; padding:1rem;
+  border-radius:50px; font-family:'Playfair Display',serif;
+  font-size:1.1rem; letter-spacing:.1em;
+  cursor:pointer; box-shadow:0 4px 20px rgba(201,32,74,.4);
+  transition:transform .15s;
+}
+.spin-btn:active { transform:scale(.97); }
+.action-row { display:flex; gap:1rem; width:100%; }
+.btn-accept, .btn-decline {
+  flex:1; padding:.9rem;
+  border:none; border-radius:50px;
+  font-family:'Playfair Display',serif;
+  font-size:1rem; cursor:pointer; letter-spacing:.05em;
+  transition:transform .15s;
+}
+.btn-accept { background:linear-gradient(135deg, #1a7a4a, #0d5a33); color:#fff; box-shadow:0 4px 20px rgba(29,180,100,.3); }
+.btn-decline { background:linear-gradient(135deg, #7a1a2a, #4a0d1a); color:#fff; box-shadow:0 4px 20px rgba(180,29,60,.3); }
+.btn-accept:active, .btn-decline:active { transform:scale(.96); }
 
-  /* Punishment overlay */
-  .punishment-overlay { background: rgba(0,0,0,.9); }
-  .punishment-card {
-    background: linear-gradient(160deg, #2a0810, #1a0508);
-    border-top: 2px solid rgba(201,32,74,.5);
-  }
-  .punishment-title { color: var(--accent2); }
-  .punishment-icon { font-size: 4rem; text-align: center; display: block; margin-bottom: .8rem; }
+/* ─── OVERLAYS ─── */
+.overlay {
+  position:fixed; inset:0; z-index:100;
+  background:rgba(0,0,0,.87);
+  display:none; flex-direction:column;
+  justify-content:flex-end;
+  animation:fadeIn .25s;
+}
+.overlay.active { display:flex; }
+.overlay-card {
+  background:linear-gradient(160deg, #2a1228, #1a0820);
+  border-radius:28px 28px 0 0;
+  padding:1.8rem 1.5rem 3rem;
+  border-top:2px solid rgba(212,168,75,.4);
+  max-height:88vh; overflow-y:auto;
+  animation:slideUp .3s ease;
+}
+.overlay-emoji { font-size:4.5rem; text-align:center; display:block; margin-bottom:.7rem; }
+.overlay-title {
+  font-family:'Playfair Display',serif;
+  font-size:1.9rem; color:var(--gold);
+  text-align:center; margin-bottom:.8rem;
+}
+.overlay-desc {
+  font-size:1.05rem; color:var(--text2);
+  line-height:1.8; text-align:center; margin-bottom:1.3rem;
+}
+.overlay-tips {
+  background:rgba(255,255,255,.04); border-radius:14px;
+  padding:.9rem 1.1rem; margin-bottom:1.3rem;
+}
+.tip-label { font-size:.72rem; text-transform:uppercase; letter-spacing:.2em; color:var(--gold); margin-bottom:.4rem; }
+.tip-text { font-size:.95rem; color:var(--text2); line-height:1.6; }
+.btn-close-overlay {
+  width:100%; padding:1rem; border:none;
+  background:rgba(255,255,255,.08); color:var(--text);
+  border-radius:50px; font-family:'Playfair Display',serif;
+  font-size:1rem; cursor:pointer; letter-spacing:.08em;
+}
+.punishment-overlay { background:rgba(0,0,0,.92); }
+.punishment-card { background:linear-gradient(160deg, #2a0810, #1a0508); border-top:2px solid rgba(201,32,74,.5); }
+.punishment-title { color:var(--accent2); }
+.punishment-icon { font-size:4rem; text-align:center; display:block; margin-bottom:.7rem; }
 
-  /* ─── TRUTH OR DARE ─── */
-  #truthdare { background: radial-gradient(ellipse at 50% 0%, #1a1a08 0%, var(--bg) 65%); }
-  .tod-selector { display: flex; gap: .8rem; padding: 0 1.5rem 1rem; }
-  .tod-tab {
-    flex: 1; padding: .8rem; border: 1px solid rgba(212,168,75,.25);
-    background: var(--card); border-radius: 50px; text-align: center;
-    cursor: pointer; transition: all .2s;
-    font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--muted);
-  }
-  .tod-tab.active {
-    background: linear-gradient(135deg, var(--gold), #9a7020);
-    border-color: var(--gold); color: #000;
-    box-shadow: 0 4px 20px rgba(212,168,75,.3);
-  }
-  .tod-card-area { padding: 0 1.5rem; }
-  .tod-card {
-    background: var(--card); border-radius: 24px;
-    padding: 2.5rem 1.5rem; text-align: center;
-    border: 1px solid rgba(212,168,75,.2);
-    min-height: 220px; display: flex; flex-direction: column;
-    justify-content: center; align-items: center; gap: 1rem;
-    box-shadow: var(--shadow);
-  }
-  .tod-icon { font-size: 3.5rem; }
-  .tod-text {
-    font-size: 1.15rem; color: var(--cream);
-    line-height: 1.7; font-style: italic;
-  }
-  .tod-placeholder { color: var(--muted); font-size: 1rem; }
-  .btn-next {
-    width: 100%; margin-top: .8rem; padding: 1.1rem;
-    background: linear-gradient(135deg, var(--gold), #7a5a10);
-    border: none; border-radius: 50px; color: #000;
-    font-family: 'Playfair Display', serif; font-size: 1.05rem;
-    letter-spacing: .08em; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(212,168,75,.3);
-    transition: transform .15s;
-  }
-  .btn-next:active { transform: scale(.97); }
+/* ─── TRUTH OR DARE ─── */
+#truthdare { background:radial-gradient(ellipse at 50% 0%, #1a1a08 0%, var(--bg) 65%); }
+.tod-selector { display:flex; gap:.6rem; padding:0 1.5rem .8rem; }
+.tod-tab {
+  flex:1; padding:.75rem; border:1px solid rgba(212,168,75,.25);
+  background:var(--card); border-radius:50px; text-align:center;
+  cursor:pointer; transition:all .2s;
+  font-family:'Playfair Display',serif; font-size:.9rem; color:var(--muted);
+}
+.tod-tab.active {
+  background:linear-gradient(135deg, var(--gold), #9a7020);
+  border-color:var(--gold); color:#000;
+  box-shadow:0 4px 20px rgba(212,168,75,.3);
+}
+.tod-card-area { padding:0 1.5rem; }
+.tod-card {
+  background:var(--card); border-radius:24px;
+  padding:2.2rem 1.5rem; text-align:center;
+  border:1px solid rgba(212,168,75,.2);
+  min-height:200px; display:flex; flex-direction:column;
+  justify-content:center; align-items:center; gap:.8rem;
+  box-shadow:var(--shadow);
+}
+.tod-icon { font-size:3.2rem; }
+.tod-for-badge {
+  font-size:.75rem; text-transform:uppercase; letter-spacing:.15em;
+  padding:.2rem .8rem; border-radius:50px; margin-bottom:.2rem;
+}
+.tod-for-badge.male { background:rgba(100,136,234,.2); color:var(--blue); }
+.tod-for-badge.female { background:rgba(201,32,74,.15); color:var(--accent2); }
+.tod-for-badge.both { background:rgba(212,168,75,.12); color:var(--gold); }
+.tod-text { font-size:1.12rem; color:var(--cream); line-height:1.7; font-style:italic; }
+.tod-placeholder { color:var(--muted); font-size:1rem; }
+.btn-next {
+  width:100%; margin-top:.8rem; padding:1rem;
+  background:linear-gradient(135deg, var(--gold), #7a5a10);
+  border:none; border-radius:50px; color:#000;
+  font-family:'Playfair Display',serif; font-size:1rem;
+  letter-spacing:.08em; cursor:pointer;
+  box-shadow:0 4px 20px rgba(212,168,75,.3);
+  transition:transform .15s;
+}
+.btn-next:active { transform:scale(.97); }
+.tod-counter {
+  text-align:center; color:var(--muted);
+  font-size:.8rem; margin-top:.4rem;
+  letter-spacing:.1em;
+}
 
-  /* ─── CHALLENGES ─── */
-  #challenges { background: radial-gradient(ellipse at 50% 0%, #081a1a 0%, var(--bg) 65%); }
-  .challenge-body { padding: 0 1.5rem 2rem; }
-  .challenge-card {
-    background: var(--card); border-radius: 24px; padding: 2rem 1.5rem;
-    border: 1px solid rgba(45,212,160,.15); text-align: center;
-    box-shadow: var(--shadow); margin-bottom: 1rem;
-  }
-  .challenge-icon { font-size: 4rem; display: block; margin-bottom: .8rem; }
-  .challenge-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem; color: var(--green); margin-bottom: .5rem;
-  }
-  .challenge-text { font-size: 1rem; color: var(--text2); line-height: 1.7; font-style: italic; }
-  .challenge-timer { font-size: 2.5rem; color: var(--cream); font-family: 'Playfair Display', serif; margin: .8rem 0; }
-  .timer-label { font-size: .8rem; color: var(--muted); letter-spacing: .2em; text-transform: uppercase; }
-  .timer-btns { display: flex; gap: .8rem; margin-top: .8rem; }
-  .btn-timer {
-    flex: 1; padding: .8rem;
-    background: rgba(45,212,160,.12); border: 1px solid rgba(45,212,160,.3);
-    color: var(--green); border-radius: 50px; cursor: pointer;
-    font-family: 'Playfair Display', serif; font-size: .95rem;
-    transition: background .15s;
-  }
-  .btn-timer:active { background: rgba(45,212,160,.25); }
-  .btn-timer.danger {
-    background: rgba(201,32,74,.12); border-color: rgba(201,32,74,.3);
-    color: var(--accent2);
-  }
-  .btn-new-challenge {
-    width: 100%; padding: 1.1rem;
-    background: linear-gradient(135deg, #1a5a4a, #0d3a30);
-    border: none; border-radius: 50px; color: #fff;
-    font-family: 'Playfair Display', serif; font-size: 1.05rem;
-    letter-spacing: .08em; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(45,212,160,.2);
-    transition: transform .15s;
-  }
-  .btn-new-challenge:active { transform: scale(.97); }
+/* ─── CHALLENGES ─── */
+#challenges { background:radial-gradient(ellipse at 50% 0%, #081a1a 0%, var(--bg) 65%); }
+.challenge-body { padding:0 1.5rem 2rem; }
+.challenge-card {
+  background:var(--card); border-radius:24px; padding:1.8rem 1.5rem;
+  border:1px solid rgba(45,212,160,.15); text-align:center;
+  box-shadow:var(--shadow); margin-bottom:1rem;
+}
+.challenge-icon { font-size:3.5rem; display:block; margin-bottom:.7rem; }
+.challenge-for {
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.15em;
+  padding:.2rem .8rem; border-radius:50px; display:inline-block; margin-bottom:.5rem;
+}
+.challenge-for.male { background:rgba(100,136,234,.2); color:var(--blue); }
+.challenge-for.female { background:rgba(201,32,74,.15); color:var(--accent2); }
+.challenge-for.both { background:rgba(45,212,160,.12); color:var(--green); }
+.challenge-name { font-family:'Playfair Display',serif; font-size:1.5rem; color:var(--green); margin-bottom:.4rem; }
+.challenge-text { font-size:1rem; color:var(--text2); line-height:1.7; font-style:italic; }
+.challenge-timer { font-size:2.5rem; color:var(--cream); font-family:'Playfair Display',serif; margin:.7rem 0; }
+.timer-label { font-size:.8rem; color:var(--muted); letter-spacing:.2em; text-transform:uppercase; }
+.timer-btns { display:flex; gap:.8rem; margin-top:.8rem; }
+.btn-timer {
+  flex:1; padding:.75rem;
+  background:rgba(45,212,160,.12); border:1px solid rgba(45,212,160,.3);
+  color:var(--green); border-radius:50px; cursor:pointer;
+  font-family:'Playfair Display',serif; font-size:.9rem;
+  transition:background .15s;
+}
+.btn-timer:active { background:rgba(45,212,160,.25); }
+.btn-timer.danger { background:rgba(201,32,74,.12); border-color:rgba(201,32,74,.3); color:var(--accent2); }
+.btn-new-challenge {
+  width:100%; padding:1rem;
+  background:linear-gradient(135deg, #1a5a4a, #0d3a30);
+  border:none; border-radius:50px; color:#fff;
+  font-family:'Playfair Display',serif; font-size:1rem;
+  letter-spacing:.08em; cursor:pointer;
+  box-shadow:0 4px 20px rgba(45,212,160,.2);
+  transition:transform .15s;
+}
+.btn-new-challenge:active { transform:scale(.97); }
 
-  /* ─── WÜRFEL ─── */
-  #dice-screen { background: radial-gradient(ellipse at 50% 0%, #1a0a0a 0%, var(--bg) 65%); }
-  .dice-body { padding: 0 1.5rem 2rem; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
-  .dice-display {
-    font-size: 8rem; text-align: center;
-    cursor: pointer; transition: transform .1s;
-    filter: drop-shadow(0 0 20px rgba(201,32,74,.4));
-  }
-  .dice-display:active { transform: scale(.9) rotate(15deg); }
-  .dice-hint { font-size: 1rem; color: var(--muted); text-align: center; font-style: italic; }
-  .dice-result-card {
-    width: 100%; background: var(--card);
-    border-radius: 20px; padding: 1.5rem;
-    border: 1px solid rgba(201,32,74,.2);
-    text-align: center;
-  }
-  .dice-result-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: .5rem; }
-  .dice-result-text { font-size: 1rem; color: var(--text2); line-height: 1.6; font-style: italic; }
-  .dice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; width: 100%; }
-  .dice-category {
-    background: var(--card2); border-radius: 14px;
-    padding: .8rem; text-align: center; cursor: pointer;
-    border: 1px solid rgba(201,32,74,.15);
-    transition: all .15s;
-  }
-  .dice-category.selected {
-    border-color: var(--accent); background: rgba(201,32,74,.1);
-  }
-  .dice-category:active { transform: scale(.96); }
-  .dc-icon { font-size: 1.8rem; }
-  .dc-name { font-size: .85rem; color: var(--text2); margin-top: .2rem; }
+/* ─── DICE ─── */
+#dice-screen { background:radial-gradient(ellipse at 50% 0%, #1a0a0a 0%, var(--bg) 65%); }
+.dice-body { padding:0 1.5rem 2rem; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+.dice-display {
+  font-size:7rem; text-align:center;
+  cursor:pointer; transition:transform .1s;
+  filter:drop-shadow(0 0 20px rgba(201,32,74,.4));
+}
+.dice-display.rolling { animation:diceBounce .5s ease; }
+.dice-display:active { transform:scale(.9) rotate(15deg); }
+.dice-hint { font-size:1rem; color:var(--muted); text-align:center; font-style:italic; }
+.dice-result-card {
+  width:100%; background:var(--card);
+  border-radius:20px; padding:1.4rem;
+  border:1px solid rgba(201,32,74,.2); text-align:center;
+}
+.dice-result-for {
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.15em;
+  padding:.2rem .8rem; border-radius:50px; display:inline-block; margin-bottom:.5rem;
+}
+.dice-result-for.male { background:rgba(100,136,234,.2); color:var(--blue); }
+.dice-result-for.female { background:rgba(201,32,74,.15); color:var(--accent2); }
+.dice-result-for.both { background:rgba(212,168,75,.12); color:var(--gold); }
+.dice-result-title { font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold); margin-bottom:.4rem; }
+.dice-result-text { font-size:1rem; color:var(--text2); line-height:1.6; font-style:italic; }
+.dice-grid { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; width:100%; }
+.dice-category {
+  background:var(--card2); border-radius:14px;
+  padding:.75rem; text-align:center; cursor:pointer;
+  border:1px solid rgba(201,32,74,.15); transition:all .15s;
+}
+.dice-category.selected { border-color:var(--accent); background:rgba(201,32,74,.1); }
+.dice-category:active { transform:scale(.96); }
+.dc-icon { font-size:1.7rem; }
+.dc-name { font-size:.82rem; color:var(--text2); margin-top:.15rem; }
+.btn-roll {
+  width:100%; padding:1rem;
+  background:linear-gradient(135deg, var(--accent), #7a0f29);
+  border:none; border-radius:50px; color:#fff;
+  font-family:'Playfair Display',serif; font-size:1.05rem;
+  cursor:pointer; box-shadow:0 4px 20px rgba(201,32,74,.4);
+  transition:transform .15s;
+}
+.btn-roll:active { transform:scale(.97); }
 
-  /* ─── WUNSCHBOX ─── */
-  #wishbox { background: radial-gradient(ellipse at 50% 0%, #0a0a1a 0%, var(--bg) 65%); }
-  .wish-body { padding: 0 1.5rem 2rem; }
-  .wish-input-area {
-    background: var(--card); border-radius: 20px; padding: 1.2rem;
-    border: 1px solid rgba(100,100,200,.2); margin-bottom: 1rem;
-  }
-  .wish-input {
-    width: 100%; background: transparent; border: none;
-    color: var(--text); font-family: 'Cormorant Garamond', serif;
-    font-size: 1rem; resize: none; outline: none;
-    min-height: 80px; line-height: 1.6;
-  }
-  .wish-input::placeholder { color: var(--muted); }
-  .wish-input-row { display: flex; gap: .8rem; margin-top: .8rem; }
-  .wish-select {
-    flex: 1; background: var(--card2); border: 1px solid rgba(100,100,200,.2);
-    color: var(--text); padding: .6rem; border-radius: 10px;
-    font-family: 'Cormorant Garamond', serif; font-size: .95rem;
-    outline: none;
-  }
-  .btn-add-wish {
-    padding: .6rem 1.2rem; background: linear-gradient(135deg, #3a3a9a, #1a1a5a);
-    border: none; border-radius: 10px; color: #fff;
-    font-family: 'Playfair Display', serif; font-size: .9rem;
-    cursor: pointer; transition: transform .15s;
-  }
-  .btn-add-wish:active { transform: scale(.96); }
-  .wish-list { display: flex; flex-direction: column; gap: .8rem; }
-  .wish-item {
-    background: var(--card); border-radius: 16px; padding: 1rem 1.2rem;
-    display: flex; align-items: center; gap: .8rem;
-    border-left: 3px solid var(--wish-color, #6464c8);
-    animation: fadeUp .25s ease;
-  }
-  .wish-item-icon { font-size: 1.5rem; flex-shrink: 0; }
-  .wish-item-content { flex: 1; }
-  .wish-item-text { font-size: .95rem; color: var(--text2); line-height: 1.4; }
-  .wish-item-tag {
-    font-size: .7rem; text-transform: uppercase; letter-spacing: .1em;
-    color: var(--muted); margin-top: .2rem;
-  }
-  .wish-item-del {
-    background: none; border: none; color: var(--muted);
-    font-size: 1.2rem; cursor: pointer; padding: .2rem;
-  }
-  .wish-empty { text-align: center; color: var(--muted); font-style: italic; padding: 2rem; font-size: 1rem; }
+/* ─── WISHBOX ─── */
+#wishbox { background:radial-gradient(ellipse at 50% 0%, #0a0a1a 0%, var(--bg) 65%); }
+.wish-body { padding:0 1.5rem 2rem; }
+.wish-input-area {
+  background:var(--card); border-radius:20px; padding:1.1rem;
+  border:1px solid rgba(100,100,200,.2); margin-bottom:.8rem;
+}
+.wish-input {
+  width:100%; background:transparent; border:none;
+  color:var(--text); font-family:'Cormorant Garamond',serif;
+  font-size:1rem; resize:none; outline:none;
+  min-height:75px; line-height:1.6;
+}
+.wish-input::placeholder { color:var(--muted); }
+.wish-input-row { display:flex; gap:.6rem; margin-top:.7rem; flex-wrap:wrap; }
+.wish-select {
+  flex:1; min-width:80px; background:var(--card2);
+  border:1px solid rgba(100,100,200,.2);
+  color:var(--text); padding:.55rem .5rem; border-radius:10px;
+  font-family:'Cormorant Garamond',serif; font-size:.9rem; outline:none;
+}
+.btn-add-wish {
+  padding:.55rem 1rem; background:linear-gradient(135deg, #3a3a9a, #1a1a5a);
+  border:none; border-radius:10px; color:#fff;
+  font-family:'Playfair Display',serif; font-size:.88rem;
+  cursor:pointer; transition:transform .15s; white-space:nowrap;
+}
+.btn-add-wish:active { transform:scale(.96); }
+.wish-actions { display:flex; gap:.8rem; margin-bottom:.8rem; }
+.wish-list { display:flex; flex-direction:column; gap:.7rem; }
+.wish-item {
+  background:var(--card); border-radius:16px; padding:.9rem 1.1rem;
+  display:flex; align-items:center; gap:.7rem;
+  border-left:3px solid var(--wish-color, #6464c8);
+  animation:fadeUp .25s ease;
+}
+.wish-item-icon { font-size:1.4rem; flex-shrink:0; }
+.wish-item-content { flex:1; }
+.wish-item-text { font-size:.93rem; color:var(--text2); line-height:1.4; }
+.wish-item-meta { font-size:.72rem; color:var(--muted); margin-top:.25rem; }
+.wish-item-del {
+  background:none; border:none; color:rgba(255,255,255,.2);
+  font-size:1.1rem; cursor:pointer; padding:.25rem;
+}
+.wish-empty { text-align:center; color:var(--muted); font-style:italic; padding:2rem 0; }
 
-  /* ─── HEISSKALT ─── */
-  #heisskalte { background: radial-gradient(ellipse at 50% 0%, #0a101a 0%, var(--bg) 65%); }
-  .hk-body { padding: 0 1.5rem 2rem; }
-  .hk-display {
-    background: var(--card); border-radius: 24px; padding: 2rem 1.5rem;
-    text-align: center; border: 1px solid rgba(100,150,255,.2);
-    margin-bottom: 1.2rem; box-shadow: var(--shadow); min-height: 180px;
-    display: flex; flex-direction: column; justify-content: center; align-items: center; gap: .8rem;
-  }
-  .hk-icon { font-size: 4rem; }
-  .hk-category { font-size: .75rem; text-transform: uppercase; letter-spacing: .2em; color: var(--muted); }
-  .hk-text { font-size: 1.1rem; color: var(--cream); line-height: 1.7; font-style: italic; }
-  .hk-player-select {
-    display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.2rem;
-  }
-  .hk-player {
-    padding: .5rem 1.2rem; border-radius: 50px;
-    border: 1px solid rgba(255,255,255,.1);
-    background: var(--card); color: var(--muted); cursor: pointer;
-    font-family: 'Playfair Display', serif; transition: all .15s;
-  }
-  .hk-player.active {
-    background: linear-gradient(135deg, #1a3a6a, #0d2040);
-    border-color: #6090e0; color: #a0c0ff;
-  }
-  .btn-hk { width: 100%; padding: 1.1rem; background: linear-gradient(135deg, #1a3a8a, #0d204a);
-    border: none; border-radius: 50px; color: #fff;
-    font-family: 'Playfair Display', serif; font-size: 1.05rem;
-    letter-spacing: .08em; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(100,150,255,.2);
-    transition: transform .15s;
-  }
-  .btn-hk:active { transform: scale(.97); }
+/* ─── HEISS KALT ─── */
+#heisskalte { background:radial-gradient(ellipse at 50% 0%, #1a0a08 0%, var(--bg) 65%); }
+.hk-body { padding:0 1.5rem 2rem; }
+.hk-player-select { display:flex; gap:.8rem; margin-bottom:1rem; }
+.hk-player {
+  flex:1; padding:.75rem; text-align:center;
+  background:var(--card); border:1px solid rgba(201,32,74,.2);
+  border-radius:50px; cursor:pointer; font-size:.9rem;
+  transition:all .2s; color:var(--muted);
+}
+.hk-player.active {
+  background:linear-gradient(135deg, rgba(201,32,74,.3), rgba(201,32,74,.1));
+  border-color:var(--accent); color:var(--cream);
+}
+.hk-display {
+  background:var(--card); border-radius:24px;
+  padding:2rem 1.5rem; text-align:center; margin-bottom:1rem;
+  border:1px solid rgba(201,32,74,.2); box-shadow:var(--shadow);
+  min-height:180px; display:flex; flex-direction:column;
+  justify-content:center; align-items:center; gap:.5rem;
+}
+.hk-icon { font-size:3.5rem; }
+.hk-category {
+  font-size:.72rem; text-transform:uppercase; letter-spacing:.2em;
+  color:var(--gold); margin-bottom:.2rem;
+}
+.hk-text { font-size:1.1rem; color:var(--cream); line-height:1.6; font-style:italic; }
+.hk-feedback-row { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-bottom:.8rem; }
+.btn-hk-feed {
+  padding:.9rem;
+  border:none; border-radius:50px;
+  font-family:'Playfair Display',serif; font-size:1rem; cursor:pointer;
+  transition:transform .15s;
+}
+.btn-hk-feed:active { transform:scale(.96); }
+.btn-heiss { background:rgba(255,60,60,.15); border:1px solid rgba(255,60,60,.35); color:#ff9090; }
+.btn-kalt { background:rgba(60,140,255,.15); border:1px solid rgba(60,140,255,.35); color:#90b8ff; }
+.hk-feedback-msg { text-align:center; font-size:1.1rem; color:var(--cream); min-height:1.5rem; font-style:italic; margin-bottom:.8rem; }
+.btn-hk {
+  width:100%; padding:1rem;
+  background:linear-gradient(135deg, #6a1a30, #4a0d20);
+  border:none; border-radius:50px; color:#fff;
+  font-family:'Playfair Display',serif; font-size:1.05rem;
+  cursor:pointer; box-shadow:0 4px 20px rgba(201,32,74,.3);
+  transition:transform .15s;
+}
+.btn-hk:active { transform:scale(.97); }
 
-  /* ─── ANIMATIONS ─── */
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.06); } }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-8px) rotate(-3deg); } 75% { transform: translateX(8px) rotate(3deg); } }
+/* ─── STRIPTEASE MODE ─── */
+#striptease { background:radial-gradient(ellipse at 50% 0%, #0a0a0a 0%, var(--bg) 65%); }
+.strip-body { padding:0 1.5rem 2rem; }
+.strip-player-row { display:flex; gap:.8rem; margin-bottom:1rem; }
+.strip-player-btn {
+  flex:1; padding:.75rem; text-align:center;
+  background:var(--card); border:1px solid rgba(212,168,75,.2);
+  border-radius:50px; cursor:pointer; font-size:.88rem;
+  color:var(--muted); transition:all .2s;
+}
+.strip-player-btn.active {
+  background:linear-gradient(135deg, rgba(212,168,75,.2), rgba(212,168,75,.05));
+  border-color:var(--gold); color:var(--gold);
+}
+.strip-card {
+  background:var(--card); border-radius:24px;
+  padding:2rem 1.5rem; text-align:center; margin-bottom:1rem;
+  border:1px solid rgba(212,168,75,.2); box-shadow:var(--shadow);
+}
+.strip-item-icon { font-size:3.5rem; display:block; margin-bottom:.6rem; }
+.strip-item-name { font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold); margin-bottom:.4rem; }
+.strip-item-task { font-size:1rem; color:var(--text2); line-height:1.7; font-style:italic; }
+.strip-score-row { display:flex; gap:1rem; margin-bottom:1rem; }
+.strip-score {
+  flex:1; background:var(--card); border-radius:14px; padding:.8rem;
+  text-align:center; border:1px solid rgba(212,168,75,.15);
+}
+.strip-score-name { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
+.strip-score-num { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); }
 
-  .spinning { animation: spin .15s linear infinite; }
-  .shaking { animation: shake .4s ease; }
-
-  /* ─── MISC ─── */
-  .section-label {
-    font-size: .7rem; text-transform: uppercase; letter-spacing: .2em;
-    color: var(--muted); padding: 0 1.5rem .5rem;
-  }
-  .divider { height: 1px; background: rgba(255,255,255,.06); margin: .5rem 1.5rem; }
-
-  /* scrollbar */
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(201,32,74,.3); border-radius: 3px; }
-
-  /* Safe area */
-  .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 1rem); }
+/* ─── ANIMATIONS ─── */
+.spinning { animation:spin .08s linear infinite; }
 </style>
 </head>
 <body>
@@ -474,50 +621,95 @@
 <!-- ─────────────────── SPLASH ─────────────────── -->
 <div class="screen active" id="splash">
   <div class="splash-inner">
-    <div class="splash-logo">🌹</div>
-    <h1 class="splash-title">LiebesSpiel</h1>
-    <p class="splash-sub">Für Zwei · Mit Stil</p>
-    <button class="btn-enter" onclick="goHome()">Betreten ✦</button>
-    <p class="age-note">Nur für Erwachsene ab 18 Jahren</p>
+    <div class="splash-logo">💋</div>
+    <h1 class="splash-title">LiebesSpiel ✦</h1>
+    <p class="splash-sub">Für Erwachsene · 18+</p>
+    <button class="btn-enter" onclick="showScreen('setup')">Spiel beginnen</button>
+    <p class="age-note">Nur für Personen ab 18 Jahren.</p>
+  </div>
+</div>
+
+<!-- ─────────────────── SETUP ─────────────────── -->
+<div class="screen" id="setup">
+  <div class="setup-inner">
+    <h2 class="setup-title">✦ Wer spielt?</h2>
+    <p class="setup-sub">Gebt eure Namen ein und wählt euer Geschlecht</p>
+
+    <div class="setup-player">
+      <div class="setup-player-header">
+        <span class="setup-player-icon">👤</span>
+        <span class="setup-player-label">Spieler 1</span>
+      </div>
+      <input class="setup-name-input" id="name1" type="text" placeholder="Name eingeben …" maxlength="20">
+      <div class="gender-toggle">
+        <button class="gender-btn active-m" id="g1-m" onclick="setGender(1,'m')">♂ Männlich</button>
+        <button class="gender-btn" id="g1-f" onclick="setGender(1,'f')">♀ Weiblich</button>
+      </div>
+    </div>
+
+    <div class="setup-player">
+      <div class="setup-player-header">
+        <span class="setup-player-icon">👤</span>
+        <span class="setup-player-label">Spieler 2</span>
+      </div>
+      <input class="setup-name-input" id="name2" type="text" placeholder="Name eingeben …" maxlength="20">
+      <div class="gender-toggle">
+        <button class="gender-btn" id="g2-m" onclick="setGender(2,'m')">♂ Männlich</button>
+        <button class="gender-btn active-f" id="g2-f" onclick="setGender(2,'f')">♀ Weiblich</button>
+      </div>
+    </div>
+
+    <button class="btn-start-game" onclick="startGame()">💕 Los geht's!</button>
   </div>
 </div>
 
 <!-- ─────────────────── HOME ─────────────────── -->
 <div class="screen" id="home">
   <div class="home-header">
-    <h1 class="home-title">✦ LiebesSpiel ✦</h1>
-    <p class="home-sub">Wähle euer Abenteuer</p>
+    <div class="home-players">
+      <div class="home-player-badge" id="badge1"></div>
+      <div class="home-player-badge" id="badge2"></div>
+    </div>
+    <h1 class="home-title">LiebesSpiel ✦</h1>
+    <p class="home-sub">Wählt einen Spielmodus</p>
   </div>
   <div class="modes-grid">
-    <div class="mode-card" style="--card-accent: #c9204a;" onclick="showScreen('roulette')">
+    <div class="mode-card" style="--card-accent:#c9204a;" onclick="showScreen('roulette')">
       <span class="mode-icon">🎰</span>
       <div class="mode-name">Positions-Roulette</div>
-      <div class="mode-desc">Zufällige Position – annehmen oder Strafe!</div>
+      <div class="mode-desc">Zufällige Position drehen</div>
     </div>
-    <div class="mode-card" style="--card-accent: #d4a84b;" onclick="showScreen('truthdare')">
-      <span class="mode-icon">🔥</span>
+    <div class="mode-card" style="--card-accent:#d4a84b;" onclick="openTruthDare()">
+      <span class="mode-icon">🎭</span>
       <div class="mode-name">Wahrheit oder Pflicht</div>
-      <div class="mode-desc">Heiße Fragen & gewagte Aufgaben</div>
+      <div class="mode-desc">Enthüllungen & Aufgaben</div>
     </div>
-    <div class="mode-card" style="--card-accent: #2dd4a0;" onclick="showScreen('challenges')">
+    <div class="mode-card" style="--card-accent:#2dd4a0;" onclick="showScreen('challenges')">
       <span class="mode-icon">⏱️</span>
-      <div class="mode-name">Herausforderung</div>
-      <div class="mode-desc">Timed Challenges mit Timer</div>
+      <div class="mode-name">Herausforderungen</div>
+      <div class="mode-desc">Timed Challenges</div>
     </div>
-    <div class="mode-card" style="--card-accent: #e87035;" onclick="showScreen('dice-screen')">
+    <div class="mode-card" style="--card-accent:#e8355c;" onclick="showScreen('dice-screen')">
       <span class="mode-icon">🎲</span>
       <div class="mode-name">Erotik-Würfel</div>
-      <div class="mode-desc">Würfle und entscheide das Schicksal</div>
+      <div class="mode-desc">Würfle dein Schicksal</div>
     </div>
-    <div class="mode-card" style="--card-accent: #8060d0;" onclick="showScreen('wishbox')">
+    <div class="mode-card" style="--card-accent:#6488ea;" onclick="showScreen('wishbox')">
       <span class="mode-icon">💌</span>
       <div class="mode-name">Wunschbox</div>
-      <div class="mode-desc">Geheime Wünsche aufschreiben & ziehen</div>
+      <div class="mode-desc">Geheime Wünsche</div>
     </div>
-    <div class="mode-card" style="--card-accent: #4080e0;" onclick="showScreen('heisskalte')">
-      <span class="mode-icon">🎯</span>
-      <div class="mode-name">Heiß oder Kalt</div>
-      <div class="mode-desc">Körper-Erkundungs-Spiel für zwei</div>
+    <div class="mode-card" style="--card-accent:#f0c96a;" onclick="showScreen('striptease')">
+      <span class="mode-icon">🔥</span>
+      <div class="mode-name">Strip-Spiel</div>
+      <div class="mode-desc">Kleidung Stück für Stück</div>
+    </div>
+  </div>
+  <div class="home-footer">
+    <button class="btn-settings" onclick="showScreen('setup')">⚙️ Spieler ändern</button>
+    <div class="mode-card" style="--card-accent:#a064ea;padding:.7rem 1rem;flex:1;text-align:center;cursor:pointer;" onclick="showScreen('heisskalte')">
+      <span style="font-size:1.2rem;">🎯</span>
+      <div style="font-size:.8rem;color:var(--cream);margin-top:.1rem;">Heiß oder Kalt</div>
     </div>
   </div>
 </div>
@@ -531,17 +723,14 @@
   </div>
   <div class="roulette-body">
     <div class="spin-area">
-      <span class="position-emoji" id="r-emoji">🌹</span>
-      <div class="position-name" id="r-name">Bereit zum Drehen?</div>
-      <div class="position-hint" id="r-hint">Drücke den Knopf und lass das Schicksal entscheiden ...</div>
+      <div class="position-emoji" id="r-emoji">💫</div>
+      <div class="position-name" id="r-name">Drehe das Roulette!</div>
+      <div class="position-hint" id="r-hint">Was erwartet euch heute?</div>
     </div>
-    <button class="spin-btn" onclick="spinRoulette()" id="spin-btn">🎰 Drehen!</button>
+    <button class="spin-btn" id="spin-btn" onclick="spinRoulette()">🎰 Drehen!</button>
     <div class="action-row" id="action-row" style="display:none;">
-      <button class="btn-accept" onclick="acceptPosition()">✓ Annehmen</button>
-      <button class="btn-decline" onclick="declinePosition()">✗ Ablehnen</button>
-    </div>
-    <div style="text-align:center; color:var(--muted); font-size:.85rem; font-style:italic;">
-      Abgelehnt? Dann kommt die Strafe ...
+      <button class="btn-accept" onclick="acceptPosition()">✓ Akzeptieren</button>
+      <button class="btn-decline" onclick="declinePosition()">✗ Ablehnen → Strafe</button>
     </div>
   </div>
 </div>
@@ -550,7 +739,7 @@
 <div class="screen" id="truthdare">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">← Zurück</button>
-    <span class="top-title">🔥 Wahrheit oder Pflicht</span>
+    <span class="top-title">🎭 Wahrheit oder Pflicht</span>
     <div class="top-spacer"></div>
   </div>
   <div class="tod-selector">
@@ -560,14 +749,12 @@
   </div>
   <div class="tod-card-area">
     <div class="tod-card">
-      <div class="tod-icon" id="tod-icon">💭</div>
-      <div class="tod-text" id="tod-text">
-        <span class="tod-placeholder">Wähle einen Modus & starte!</span>
-      </div>
+      <div class="tod-icon" id="tod-icon">🎭</div>
+      <div class="tod-for-badge both" id="tod-for-badge" style="display:none;"></div>
+      <div class="tod-text" id="tod-text">Drücke „Nächste" um zu beginnen!</div>
     </div>
-  </div>
-  <div style="padding: 1rem 1.5rem;">
-    <button class="btn-next" onclick="nextTod()">✨ Nächste Karte</button>
+    <div class="tod-counter" id="tod-counter"></div>
+    <button class="btn-next" onclick="nextTod()">Nächste →</button>
   </div>
 </div>
 
@@ -575,22 +762,23 @@
 <div class="screen" id="challenges">
   <div class="top-bar">
     <button class="btn-back" onclick="goHome()">← Zurück</button>
-    <span class="top-title">⏱️ Herausforderung</span>
+    <span class="top-title">⏱️ Herausforderungen</span>
     <div class="top-spacer"></div>
   </div>
   <div class="challenge-body">
     <div class="challenge-card">
-      <span class="challenge-icon" id="ch-icon">⏳</span>
-      <div class="challenge-name" id="ch-name">Neue Herausforderung</div>
-      <div class="challenge-text" id="ch-text">Drücke den Knopf und starte eine heiße Aufgabe mit Timer!</div>
-      <div class="timer-label" id="timer-label" style="display:none;">Verbleibende Zeit</div>
+      <span class="challenge-icon" id="ch-icon">⏱️</span>
+      <div class="challenge-for both" id="ch-for" style="display:none;"></div>
+      <div class="challenge-name" id="ch-name">Bereit?</div>
+      <div class="challenge-text" id="ch-text">Drücke auf „Neue Herausforderung" um zu starten!</div>
+      <div class="timer-label" id="timer-label" style="display:none;">Zeit</div>
       <div class="challenge-timer" id="timer-display" style="display:none;">00:00</div>
       <div class="timer-btns" id="timer-btns" style="display:none;">
-        <button class="btn-timer" id="btn-pause" onclick="toggleTimer()">⏸ Pause</button>
-        <button class="btn-timer danger" onclick="stopTimer()">■ Stop</button>
+        <button class="btn-timer" id="btn-pause" onclick="toggleTimer()">▶ Starten</button>
+        <button class="btn-timer danger" onclick="stopTimer()">■ Reset</button>
       </div>
     </div>
-    <button class="btn-new-challenge" onclick="newChallenge()">🎯 Neue Herausforderung</button>
+    <button class="btn-new-challenge" onclick="newChallenge()">🔀 Neue Herausforderung</button>
   </div>
 </div>
 
@@ -605,15 +793,19 @@
     <p class="dice-hint">Wähle eine Kategorie & würfle!</p>
     <div class="dice-grid">
       <div class="dice-category selected" id="dc-0" onclick="selectDiceCat(0)"><div class="dc-icon">💋</div><div class="dc-name">Körper</div></div>
-      <div class="dice-category" id="dc-1" onclick="selectDiceCat(1)"><div class="dc-icon">🫦</div><div class="dc-name">Küsse</div></div>
-      <div class="dice-category" id="dc-2" onclick="selectDiceCat(2)"><div class="dc-icon">🤲</div><div class="dc-name">Berührung</div></div>
+      <div class="dice-category" id="dc-1" onclick="selectDiceCat(1)"><div class="dc-icon">👅</div><div class="dc-name">Oral</div></div>
+      <div class="dice-category" id="dc-2" onclick="selectDiceCat(2)"><div class="dc-icon">🤲</div><div class="dc-name">Hände</div></div>
       <div class="dice-category" id="dc-3" onclick="selectDiceCat(3)"><div class="dc-icon">🌡️</div><div class="dc-name">Intensität</div></div>
+      <div class="dice-category" id="dc-4" onclick="selectDiceCat(4)"><div class="dc-icon">🎭</div><div class="dc-name">Rollenspiel</div></div>
+      <div class="dice-category" id="dc-5" onclick="selectDiceCat(5)"><div class="dc-icon">🔥</div><div class="dc-name">Wild</div></div>
     </div>
     <div class="dice-display" id="dice-face" onclick="rollDice()">🎲</div>
     <div class="dice-result-card">
+      <div class="dice-result-for both" id="dice-for-badge" style="display:none;"></div>
       <div class="dice-result-title" id="dice-result-title">Würfle!</div>
-      <div class="dice-result-text" id="dice-result-text">Tippe auf den Würfel um zu würfeln.</div>
+      <div class="dice-result-text" id="dice-result-text">Tippe auf den Würfel.</div>
     </div>
+    <button class="btn-roll" onclick="rollDice()">🎲 Würfeln!</button>
   </div>
 </div>
 
@@ -626,13 +818,9 @@
   </div>
   <div class="wish-body">
     <div class="wish-input-area">
-      <textarea class="wish-input" id="wish-input" placeholder="Schreibe einen geheimen Wunsch ..."></textarea>
+      <textarea class="wish-input" id="wish-input" placeholder="Schreibe einen geheimen Wunsch …"></textarea>
       <div class="wish-input-row">
-        <select class="wish-select" id="wish-who">
-          <option value="both">Beide</option>
-          <option value="er">Er</option>
-          <option value="sie">Sie</option>
-        </select>
+        <select class="wish-select" id="wish-who"></select>
         <select class="wish-select" id="wish-level">
           <option value="zärtlich">💕 Zärtlich</option>
           <option value="heiß">🔥 Heiß</option>
@@ -641,13 +829,53 @@
         <button class="btn-add-wish" onclick="addWish()">+ Hinzufügen</button>
       </div>
     </div>
-    <div style="display:flex;gap:.8rem;margin-bottom:1rem;">
-      <button class="btn-next" style="flex:1;margin:0;" onclick="drawWish()">🎲 Wunsch ziehen</button>
+    <div class="wish-actions">
+      <button class="btn-next" style="margin:0;flex:1;" onclick="drawWish()">🎲 Wunsch ziehen</button>
     </div>
     <p class="section-label">Wunschliste (<span id="wish-count">0</span>)</p>
     <div class="wish-list" id="wish-list">
       <div class="wish-empty">Noch keine Wünsche. Seid mutig! 💌</div>
     </div>
+  </div>
+</div>
+
+<!-- ─────────────────── STRIPTEASE ─────────────────── -->
+<div class="screen" id="striptease">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">← Zurück</button>
+    <span class="top-title">🔥 Strip-Spiel</span>
+    <div class="top-spacer"></div>
+  </div>
+  <div class="strip-body">
+    <p style="text-align:center;color:var(--muted);font-size:.88rem;font-style:italic;margin-bottom:1rem;">
+      Richtig beantworten = safe. Falsch = ein Teil weniger! 😈
+    </p>
+    <div class="strip-score-row">
+      <div class="strip-score">
+        <div class="strip-score-name" id="strip-name1">Spieler 1</div>
+        <div class="strip-score-num" id="strip-score1">0</div>
+        <div style="font-size:.7rem;color:var(--muted);">ausgezogen</div>
+      </div>
+      <div class="strip-score">
+        <div class="strip-score-name" id="strip-name2">Spieler 2</div>
+        <div class="strip-score-num" id="strip-score2">0</div>
+        <div style="font-size:.7rem;color:var(--muted);">ausgezogen</div>
+      </div>
+    </div>
+    <div class="strip-player-row">
+      <div class="strip-player-btn active" id="sp-btn1" onclick="setStripPlayer(1)">👤 <span id="sp-name1">S1</span> ist dran</div>
+      <div class="strip-player-btn" id="sp-btn2" onclick="setStripPlayer(2)">👤 <span id="sp-name2">S2</span> ist dran</div>
+    </div>
+    <div class="strip-card">
+      <span class="strip-item-icon" id="strip-q-icon">🎯</span>
+      <div class="strip-item-name" id="strip-q-cat">Bereit?</div>
+      <div class="strip-item-task" id="strip-q-text">Drücke auf „Neue Aufgabe" um zu starten!</div>
+    </div>
+    <div style="display:flex;gap:.8rem;margin-bottom:.8rem;">
+      <button class="btn-accept" style="flex:1;" onclick="stripResult(true)">✓ Geschafft</button>
+      <button class="btn-decline" style="flex:1;" onclick="stripResult(false)">✗ Ausziehen!</button>
+    </div>
+    <button class="btn-new-challenge" onclick="newStripQuestion()">🔀 Neue Aufgabe</button>
   </div>
 </div>
 
@@ -659,29 +887,28 @@
     <div class="top-spacer"></div>
   </div>
   <div class="hk-body">
-    <p style="text-align:center; color:var(--muted); font-size:.9rem; font-style:italic; margin-bottom:1rem; padding:0 1rem;">
+    <p style="text-align:center;color:var(--muted);font-size:.88rem;font-style:italic;margin-bottom:.8rem;">
       Einer erkundet – der andere sagt nur „heiß" oder „kalt"!
     </p>
     <div class="hk-player-select">
-      <div class="hk-player active" id="hk-p1" onclick="setHkPlayer(1)">👤 Er erkundet</div>
-      <div class="hk-player" id="hk-p2" onclick="setHkPlayer(2)">👤 Sie erkundet</div>
+      <div class="hk-player active" id="hk-p1" onclick="setHkPlayer(1)"></div>
+      <div class="hk-player" id="hk-p2" onclick="setHkPlayer(2)"></div>
     </div>
     <div class="hk-display">
       <div class="hk-icon" id="hk-icon">🎯</div>
       <div class="hk-category" id="hk-cat"></div>
       <div class="hk-text" id="hk-text">Bereit? Drücke auf „Neue Zone"!</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem;">
-      <button style="padding:.9rem;background:rgba(255,60,60,.12);border:1px solid rgba(255,60,60,.3);color:#ff8080;border-radius:50px;font-family:'Playfair Display',serif;font-size:1rem;cursor:pointer;" onclick="hkFeedback('🔥 Heiß! Mehr davon ...')">🔥 Heiß!</button>
-      <button style="padding:.9rem;background:rgba(60,140,255,.12);border:1px solid rgba(60,140,255,.3);color:#80b0ff;border-radius:50px;font-family:'Playfair Display',serif;font-size:1rem;cursor:pointer;" onclick="hkFeedback('🧊 Kalt – weiter suchen ...')">🧊 Kalt</button>
+    <div class="hk-feedback-row">
+      <button class="btn-hk-feed btn-heiss" onclick="hkFeedback('🔥 Heiß! Mehr davon …')">🔥 Heiß!</button>
+      <button class="btn-hk-feed btn-kalt" onclick="hkFeedback('🧊 Kalt – weiter suchen …')">🧊 Kalt</button>
     </div>
-    <div id="hk-feedback" style="text-align:center;font-size:1.1rem;color:var(--cream);min-height:1.5rem;font-style:italic;margin-bottom:1rem;"></div>
+    <div class="hk-feedback-msg" id="hk-feedback"></div>
     <button class="btn-hk" onclick="newHkZone()">🎯 Neue Zone</button>
   </div>
 </div>
 
 <!-- ─────────────────── OVERLAYS ─────────────────── -->
-<!-- Accept overlay -->
 <div class="overlay" id="accept-overlay">
   <div class="overlay-card">
     <span class="overlay-emoji" id="ov-emoji"></span>
@@ -691,21 +918,19 @@
       <div class="tip-label">💡 Tipp</div>
       <div class="tip-text" id="ov-tip"></div>
     </div>
-    <button class="btn-close-overlay" onclick="closeOverlay('accept-overlay')">✓ Verstanden – Wir starten!</button>
+    <button class="btn-close-overlay" onclick="closeOverlay('accept-overlay')">✓ Wir starten!</button>
   </div>
 </div>
 
-<!-- Decline / punishment overlay -->
 <div class="overlay punishment-overlay" id="punish-overlay">
   <div class="overlay-card punishment-card">
     <span class="punishment-icon" id="pun-icon"></span>
     <h2 class="overlay-title punishment-title">⚡ Strafe!</h2>
     <p class="overlay-desc" id="pun-desc"></p>
-    <button class="btn-close-overlay" onclick="closeOverlay('punish-overlay')">🔥 Strafe akzeptieren</button>
+    <button class="btn-close-overlay" onclick="closeOverlay('punish-overlay')">🔥 Strafe akzeptiert</button>
   </div>
 </div>
 
-<!-- Wish draw overlay -->
 <div class="overlay" id="wish-overlay">
   <div class="overlay-card">
     <span class="overlay-emoji">💌</span>
@@ -720,153 +945,559 @@
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-//  DATA
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+//  PLAYERS STATE
+// ══════════════════════════════════════════════════════════════════
+let players = {
+  p1: { name: 'Spieler 1', gender: 'm' },
+  p2: { name: 'Spieler 2', gender: 'f' }
+};
 
+function getMann() { return players.p1.gender === 'm' ? players.p1 : players.p2; }
+function getFrau() { return players.p1.gender === 'f' ? players.p1 : players.p2; }
+function mannName() { return getMann().name; }
+function frauName() { return getFrau().name; }
+
+// Replace template vars in task texts
+function tpl(str) {
+  return str
+    .replace(/\{MANN\}/g, mannName())
+    .replace(/\{FRAU\}/g, frauName())
+    .replace(/\{P1\}/g, players.p1.name)
+    .replace(/\{P2\}/g, players.p2.name);
+}
+
+function setGender(player, gender) {
+  const key = `p${player}`;
+  players[key].gender = gender;
+  const mBtn = document.getElementById(`g${player}-m`);
+  const fBtn = document.getElementById(`g${player}-f`);
+  mBtn.className = 'gender-btn' + (gender === 'm' ? ' active-m' : '');
+  fBtn.className = 'gender-btn' + (gender === 'f' ? ' active-f' : '');
+}
+
+function startGame() {
+  const n1 = document.getElementById('name1').value.trim() || 'Spieler 1';
+  const n2 = document.getElementById('name2').value.trim() || 'Spieler 2';
+  players.p1.name = n1;
+  players.p2.name = n2;
+
+  // Save to localStorage
+  localStorage.setItem('players', JSON.stringify(players));
+
+  updateUI();
+  showScreen('home');
+}
+
+function updateUI() {
+  // Home badges
+  const b1 = document.getElementById('badge1');
+  const b2 = document.getElementById('badge2');
+  b1.textContent = (players.p1.gender === 'm' ? '♂ ' : '♀ ') + players.p1.name;
+  b1.className = 'home-player-badge ' + (players.p1.gender === 'm' ? 'male' : 'female');
+  b2.textContent = (players.p2.gender === 'm' ? '♂ ' : '♀ ') + players.p2.name;
+  b2.className = 'home-player-badge ' + (players.p2.gender === 'm' ? 'male' : 'female');
+
+  // Wish who select
+  const ws = document.getElementById('wish-who');
+  ws.innerHTML = `
+    <option value="both">Beide</option>
+    <option value="p1">${players.p1.name}</option>
+    <option value="p2">${players.p2.name}</option>
+  `;
+
+  // HK players
+  document.getElementById('hk-p1').textContent = players.p1.name + ' erkundet';
+  document.getElementById('hk-p2').textContent = players.p2.name + ' erkundet';
+
+  // Strip names
+  document.getElementById('strip-name1').textContent = players.p1.name;
+  document.getElementById('strip-name2').textContent = players.p2.name;
+  document.getElementById('sp-name1').textContent = players.p1.name;
+  document.getElementById('sp-name2').textContent = players.p2.name;
+
+  // Render wishes
+  renderWishes();
+}
+
+// Load saved players
+(function() {
+  const saved = localStorage.getItem('players');
+  if (saved) {
+    try {
+      const p = JSON.parse(saved);
+      players = p;
+      document.getElementById('name1').value = p.p1.name;
+      document.getElementById('name2').value = p.p2.name;
+      setGender(1, p.p1.gender);
+      setGender(2, p.p2.gender);
+    } catch(e) {}
+  }
+})();
+
+// ══════════════════════════════════════════════════════════════════
+//  ANTI-REPEAT SYSTEM
+// ══════════════════════════════════════════════════════════════════
+class SmartPool {
+  constructor(items) {
+    this.items = items;
+    this.used = [];
+    this.lastIdx = -1;
+  }
+  next() {
+    // Reset when >70% used
+    if (this.used.length >= Math.max(1, Math.floor(this.items.length * 0.75))) {
+      this.used = this.lastIdx >= 0 ? [this.lastIdx] : [];
+    }
+    let pool = this.items.map((_, i) => i).filter(i => !this.used.includes(i));
+    if (pool.length === 0) { this.used = []; pool = this.items.map((_, i) => i); }
+    const idx = pool[Math.floor(Math.random() * pool.length)];
+    this.used.push(idx);
+    this.lastIdx = idx;
+    return this.items[idx];
+  }
+  reset() { this.used = []; this.lastIdx = -1; }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  DATA - POSITIONS
+// ══════════════════════════════════════════════════════════════════
 const positions = [
-  { name: "Missionarsstellung", emoji: "❤️", hint: "Der Klassiker – Intimität auf Augenhöhe.", desc: "Die wohl romantischste aller Positionen. Intimer Augenkontakt, Küsse und enge Nähe machen sie unvergesslich. Perfekt für langsame, intensive Momente.", tip: "Legt ein Kissen unter den unteren Rücken – das verändert den Winkel wundervoll." },
-  { name: "Löffelchen", emoji: "🥄", hint: "Kuscheln auf die nächste Stufe gehoben.", desc: "Beide Partner liegen auf der Seite, einer hinter dem anderen. Eine besonders innige und zärtliche Position, die Nähe und Geborgenheit schenkt.", tip: "Perfekt für langsame Morgenstunden – kein Muskelkater garantiert!" },
-  { name: "Cowgirl", emoji: "🤠", hint: "Wer oben ist, bestimmt das Tempo.", desc: "Die oben liegende Person hat die Kontrolle über Tempo und Tiefe. Eine herrliche Position um das Tempo selbst zu bestimmen.", tip: "Lehnt euch leicht vor – das intensiviert die Stimulation enorm." },
-  { name: "Doggy Style", emoji: "🐾", hint: "Tiefe und Leidenschaft pur.", desc: "Eine der intensivsten Positionen. Große Eindringtiefe und freie Hände für zusätzliche Stimulation. Perfekt für leidenschaftliche Momente.", tip: "Variiert die Körperhaltung – aufrecht vs. nach vorne gelehnt fühlt sich sehr unterschiedlich an." },
-  { name: "Reiter umgekehrt", emoji: "🌊", hint: "Ein völlig anderer Winkel, völlig neue Empfindungen.", desc: "Wie Cowgirl, aber der Blick geht in die andere Richtung. Ein anderer Winkel bedeutet völlig neue Empfindungen für beide.", tip: "Haltet euch gut fest – Balance ist der Schlüssel!" },
-  { name: "Schmetterling", emoji: "🦋", hint: "Tischkante oder Bettrand als bester Freund.", desc: "Eine Person liegt auf dem Rücken am Bettrand, die andere steht. Der Winkel ist perfekt für intensive Stimulation und trotzdem vollen Augenkontakt.", tip: "Kissen unter die Hüfte legen für optimalen Komfort." },
-  { name: "Amazone", emoji: "👑", hint: "Sie übernimmt die Führung.", desc: "Wie Cowgirl, aber die Knie stehen statt zu knien. Maximale Kontrolle und Tiefe für die oben liegende Person.", tip: "Gegenseitige Unterstützung an den Händen hilft beim Gleichgewicht." },
-  { name: "L-Position", emoji: "📐", hint: "Seitwärts und wundervoll intim.", desc: "Beide liegen, einer auf dem Rücken, einer seitlich – wie ein L. Eine entspannte Position mit überraschend intensiven Empfindungen.", tip: "Ideal wenn Energie knapp ist aber Leidenschaft nicht." },
-  { name: "Brücke", emoji: "🌉", hint: "Für Mutige – ein echtes Abenteuer.", desc: "Eine anspruchsvollere Position für Abenteuerlustige. Einer in der Brücke, der andere kniend. Einzigartige Empfindungen für beide.", tip: "Nur wenn beide fit genug sind – Aufwärmen ist Pflicht!" },
-  { name: "Sitzend gegenüber", emoji: "🪑", hint: "Auge in Auge, Körper an Körper.", desc: "Beide sitzen sich gegenüber und umschlingen sich. Maximaler Körperkontakt, Augenkontakt und Küsse gleichzeitig möglich.", tip: "Auf dem Boden oder Bett – aber immer mit genug Rücken-Support." },
+  { name:"Missionarsstellung", emoji:"❤️", hint:"Der Klassiker – Intimität auf Augenhöhe.", desc:"Die romantischste Position. Intimer Augenkontakt, Küsse und enge Nähe machen sie unvergesslich.", tip:"Legt ein Kissen unter den unteren Rücken – das verändert den Winkel wundervoll." },
+  { name:"Löffelchen", emoji:"🥄", hint:"Kuscheln auf die nächste Stufe.", desc:"Beide Partner liegen auf der Seite, einer hinter dem anderen. Innig, zärtlich, geborgen.", tip:"Perfekt für langsame Morgenstunden." },
+  { name:"Cowgirl", emoji:"🤠", hint:"Wer oben ist, bestimmt das Tempo.", desc:"Die oben liegende Person hat die Kontrolle. Wundervoll für eigene Stimulation.", tip:"Lehnt euch leicht vor – das intensiviert die Stimulation enorm." },
+  { name:"Doggy Style", emoji:"🐾", hint:"Tiefe und Leidenschaft pur.", desc:"Eine der intensivsten Positionen. Große Tiefe und freie Hände für Extra-Stimulation.", tip:"Variiert die Körperhaltung – aufrecht vs. vorgelehnt fühlt sich sehr unterschiedlich an." },
+  { name:"Umgekehrter Reiter", emoji:"🌊", hint:"Ein völlig anderer Winkel.", desc:"Wie Cowgirl, aber der Blick geht in die andere Richtung. Ganz neue Empfindungen.", tip:"Haltet euch gut fest – Balance ist der Schlüssel!" },
+  { name:"Schmetterling", emoji:"🦋", hint:"Bettrand als bester Freund.", desc:"Eine Person liegt am Bettrand, die andere steht. Perfekter Winkel, voller Augenkontakt.", tip:"Kissen unter die Hüfte für optimalen Komfort." },
+  { name:"Amazone", emoji:"👑", hint:"Sie übernimmt die Führung.", desc:"Wie Cowgirl, aber die Knie stehen statt zu knien. Maximale Kontrolle und Tiefe.", tip:"Gegenseitige Unterstützung an den Händen hilft beim Gleichgewicht." },
+  { name:"L-Position", emoji:"📐", hint:"Seitwärts und wundervoll intim.", desc:"Beide liegen, einer auf dem Rücken, einer seitlich – wie ein L. Entspannt, trotzdem intensiv.", tip:"Ideal wenn Energie knapp ist aber Leidenschaft nicht." },
+  { name:"Sitzend gegenüber", emoji:"🪑", hint:"Auge in Auge, Körper an Körper.", desc:"Beide sitzen sich gegenüber und umschlingen sich. Maximaler Körperkontakt.", tip:"Auf dem Boden oder Bett – immer mit Rücken-Support." },
+  { name:"Stehend von hinten", emoji:"🚿", hint:"Spontan, heiß, überall möglich.", desc:"Stehend von hinten – ideal für Dusche, Küche, Wand. Dominant und leidenschaftlich.", tip:"Eine Hand an der Wand, die andere für Zusatzstimulation." },
+  { name:"Scissoring", emoji:"✂️", hint:"Verschlungen und sinnlich.", desc:"Beide Partner verschlingen ihre Beine. Enge Berührung, wundersame Reibung.", tip:"Langsame, kreisende Bewegungen sind effektiver als schnelle." },
+  { name:"Der Schaukel-Stuhl", emoji:"🪑", hint:"Schaukle dich in den Himmel.", desc:"Einer sitzt auf dem Stuhl, der andere setzt sich oben drauf – schaukelnd und tief.", tip:"Langsam beginnen bis das Gleichgewicht sitzt." },
+  { name:"Rücken an Rücken", emoji:"↔️", hint:"Ungewohnt, sinnlich, anders.", desc:"Beide sitzen Rücken an Rücken. Ungewohnter Winkel mit überraschend intensiven Empfindungen.", tip:"Kommunikation über Körpersprache ist hier besonders wichtig." },
+  { name:"Die Gabel", emoji:"🍴", hint:"Tiefe auf Bestellung.", desc:"Eine Person liegt auf dem Rücken, die Beine hochgestreckt. Maximale Tiefe, intensiver Kontakt.", tip:"Ein Bein kann auf der Schulter des Partners ruhen – noch mehr Tiefe." },
+  { name:"Tantric Sitting", emoji:"🧘", hint:"Langsam, bewusst, kraftvoll.", desc:"Beide sitzen im Schneidersitz voreinander, eng umschlungen. Tantrische Energie pur.", tip:"Synchrones Atmen vertieft die Verbindung enorm." },
 ];
 
+// ══════════════════════════════════════════════════════════════════
+//  DATA - PUNISHMENTS
+// ══════════════════════════════════════════════════════════════════
 const punishments = [
-  { icon: "🫦", text: "15 Minuten Massage schenken – überall wo gewünscht!" },
-  { icon: "🎤", text: "Sing ein romantisches Lied – live und ohne Filter!" },
-  { icon: "🍓", text: "Füttere deinen Partner mit einem Früchtepfad vom Bauch." },
-  { icon: "💋", text: "50 Küsse – verteilt am ganzen Körper in 3 Minuten!" },
-  { icon: "🙈", text: "Verbringe die nächste Position mit verbundenen Augen." },
-  { icon: "🧊", text: "Ein Eiswürfel darf langsam auf dem Körper des Partners schmelzen." },
-  { icon: "🎭", text: "Stöhne das erste Lied, das einfällt, möglichst dramatisch." },
-  { icon: "🌹", text: "Flüstere 5 Dinge, die du an deinem Partner wunderschön findest." },
-  { icon: "🕯️", text: "Liebesbrief in 2 Minuten – spontan, von Herzen, vorgelesen." },
-  { icon: "🍾", text: "Ein Shot auf ex – dann bestimmt der Partner die nächste Runde." },
+  { icon:"🫦", text:"15 Minuten Massage schenken – überall wo gewünscht!" },
+  { icon:"💋", text:"50 Küsse – verteilt am ganzen Körper in 3 Minuten!" },
+  { icon:"🧊", text:"Ein Eiswürfel darf langsam auf dem Körper des Partners schmelzen." },
+  { icon:"🎭", text:"Stöhne das erste Lied, das dir einfällt, möglichst dramatisch." },
+  { icon:"🌹", text:"Flüstere 5 Dinge, die du an deinem Partner wunderschön findest." },
+  { icon:"👅", text:"Küsse deinen Partner 2 Minuten lang – nur am Nacken und hinter den Ohren." },
+  { icon:"🍓", text:"Füttere deinen Partner mit Früchten – ohne die Hände zu benutzen." },
+  { icon:"🕯️", text:"Improvisierter Liebesbrief in 60 Sekunden – laut vorlesen!" },
+  { icon:"🙈", text:"Verbringt die nächste Runde mit verbundenen Augen." },
+  { icon:"🎤", text:"Sing deinem Partner ein Liebeslied – live, ohne Musik." },
+  { icon:"🌊", text:"Massiere deinen Partner 5 Minuten nur mit Händen und Öl." },
+  { icon:"🪶", text:"Kitzle deinen Partner mit einer Feder – 3 Minuten ohne Reaktion zeigen." },
+  { icon:"💦", text:"Mache deinem Partner eine nasse Überraschung – z.B. in der Dusche." },
+  { icon:"🎯", text:"Dein Partner darf dir sagen wo du ihn für 3 Minuten verwöhnen musst." },
+  { icon:"🍾", text:"Ein Schluck Sekt vom Körper des anderen trinken." },
 ];
 
+// ══════════════════════════════════════════════════════════════════
+//  DATA - TRUTHS (with gender tags: 'both', 'mann', 'frau')
+// ══════════════════════════════════════════════════════════════════
 const truths = [
-  "Was war dein wildester Gedanke über mich in letzter Zeit?",
-  "Welche Fantasie hast du, die du noch nicht ausgesprochen hast?",
-  "Wo ist der verrückteste Ort, an dem du dir uns vorstellen könntest?",
-  "Was ist deine heimliche Schwäche an meinem Körper?",
-  "Welche Position möchtest du unbedingt noch ausprobieren?",
-  "Was ist die heißeste Erinnerung, die du an uns hast?",
-  "Welches deiner Kleidungsstücke findest du selbst am aufreizendsten?",
-  "Was könntest du stundenlang mit mir machen, das nichts mit Sex zu tun hat?",
-  "Wann warst du zuletzt überrascht von deiner eigenen Leidenschaft?",
-  "Was macht dich sofort an – ein Wort, eine Geste?",
-  "Hast du ein Fetisch, der mir noch nicht bekannt ist?",
-  "Was fehlt dir manchmal in unseren intimen Momenten?",
-  "Was ist das Kühnste, was du je an einem öffentlichen Ort gedacht hast?",
+  // BEIDE
+  { for:'both', text:"Was war dein wildester Gedanke über mich in der letzten Woche?" },
+  { for:'both', text:"Welche sexuelle Fantasie hast du, die du noch nie ausgesprochen hast?" },
+  { for:'both', text:"Wo ist der verrückteste Ort, an dem du dir uns beim Sex vorstellen könntest?" },
+  { for:'both', text:"Was ist deine heimliche Schwäche an meinem Körper?" },
+  { for:'both', text:"Welche Position möchtest du unbedingt noch ausprobieren?" },
+  { for:'both', text:"Was ist die heißeste sexuelle Erinnerung, die du an uns hast?" },
+  { for:'both', text:"Hast du mich schon mal heimlich angeschaut und dir etwas Unanständiges dabei gedacht?" },
+  { for:'both', text:"Was würdest du tun, wenn ich dir die nächsten 24 Stunden vollständig gehöre?" },
+  { for:'both', text:"Hast du schon mal in der Öffentlichkeit etwas Sexuelles mit mir gedacht?" },
+  { for:'both', text:"Welches Körperteil von mir findest du heimlich am aufregendsten?" },
+  { for:'both', text:"Was wünschst du dir öfter im Bett – und traust dich nicht zu sagen?" },
+  { for:'both', text:"Was ist das Mutigste, das du dir vorstellt aber noch nie gefragt hast?" },
+  { for:'both', text:"Welches Outfit von mir macht dich am meisten an?" },
+  { for:'both', text:"Hast du schon mal an Sex an einem gefährlichen Ort gedacht – welcher?" },
+  { for:'both', text:"Was würde passieren, wenn ich heute Nacht sage: alles ist erlaubt?" },
+  { for:'both', text:"Beschreibe in Details unsere heißeste Nacht – was hat sie so besonders gemacht?" },
+  { for:'both', text:"Welche erotische Szene aus einem Film hättest du gern mit mir nachgespielt?" },
+  { for:'both', text:"Wie lange kannst du warten, bis du nicht mehr widerstehen kannst?" },
+  { for:'both', text:"Was ist die aufregendste sexuelle Situation, die du dir für uns vorstellst?" },
+  { for:'both', text:"Hast du schon mal an ein Rollenspiel gedacht – wenn ja, welches?" },
+  { for:'both', text:"Was ist deine geheime Schwäche, die mich sofort in Fahrt bringt?" },
+  { for:'both', text:"Würdest du mich jemals filmen wollen – oder dich selbst? Und warum?" },
+  { for:'both', text:"Was würdest du mir zeigen wenn ich nie Nein sagen dürfte?" },
+  { for:'both', text:"Welcher Körperkontakt von mir bringt dich am schnellsten um den Verstand?" },
+  { for:'both', text:"Hast du schon mal etwas Sexuelles über mich fantasiert das dich selbst überrascht hat?" },
+  // MANN
+  { for:'mann', text:"Was geht dir durch den Kopf, wenn {FRAU} oben ist und das Tempo bestimmt?" },
+  { for:'mann', text:"Welcher Körperteil von {FRAU} bringt dich beim Anblick sofort auf Gedanken?" },
+  { for:'mann', text:"Was denkst du, wenn {FRAU} sich vor dir auszieht?" },
+  { for:'mann', text:"Hast du schon mal fantasiert, {FRAU} irgendwo außerhalb des Schlafzimmers zu nehmen?" },
+  { for:'mann', text:"Was würdest du tun, wenn {FRAU} dir heute Nacht alles erlaubt?" },
+  { for:'mann', text:"Was magst du am meisten wenn {FRAU} dir einen bläst – und was hättest du noch gern?" },
+  { for:'mann', text:"An welchem Körperteil von {FRAU} kommst du nie vorbei ohne etwas zu denken?" },
+  { for:'mann', text:"Was wäre deine erste Handlung, wenn {FRAU} vollständig deins wäre für eine Nacht?" },
+  { for:'mann', text:"Was macht {FRAU} im Bett, das dich sofort wahnsinnig macht?" },
+  { for:'mann', text:"Hast du schon mal davon geträumt, {FRAU} an einem öffentlichen Ort zu begehren?" },
+  // FRAU
+  { for:'frau', text:"Was geht dir durch den Kopf, wenn {MANN} das Tempo bestimmt und du nur genießt?" },
+  { for:'frau', text:"Welche Geste oder Berührung von {MANN} macht dich sofort heiß?" },
+  { for:'frau', text:"Hast du schon mal fantasiert, {MANN} auf der Arbeit oder in der Öffentlichkeit zu verführen?" },
+  { for:'frau', text:"Was würdest du {MANN} am liebsten ins Ohr flüstern, traust dich aber nicht?" },
+  { for:'frau', text:"Was findest du an {MANN} körperlich am aufregendsten – was du noch nie gesagt hast?" },
+  { for:'frau', text:"Was genießt du am meisten wenn {MANN} dir oral verwöhnt – und was hättest du gern öfter?" },
+  { for:'frau', text:"Was macht {MANN} mit seinen Händen, das du dir noch öfter wünschst?" },
+  { for:'frau', text:"Welche Fantasie über {MANN} hast du schon oft gedacht aber noch nie erzählt?" },
+  { for:'frau', text:"Was macht {MANN} im Bett am besten – beschreibe es so genau wie möglich?" },
+  { for:'frau', text:"Hast du schon mal daran gedacht, {MANN} zu überraschen – wie und wo?" },
 ];
 
+// ══════════════════════════════════════════════════════════════════
+//  DATA - DARES (for: 'both', 'mann', 'frau')
+// ══════════════════════════════════════════════════════════════════
 const dares = [
-  "Striptease – du hast 60 Sekunden und ein Lied deiner Wahl.",
-  "Massiere deinen Partner genau 5 Minuten – kein Wort dabei.",
-  "Flüstere deinem Partner 3 Fantasien ins Ohr. Keine Scheu.",
-  "Küsse deinen Partner 60 Sekunden lang – kein Unterbrechen.",
-  "Zeige deinen verführerischsten Blick – 30 Sekunden halten.",
-  "Tanze langsam für deinen Partner – kein Lachen erlaubt!",
-  "Schreib mit dem Finger eine Botschaft auf den Rücken des Partners – er/sie muss sie erraten.",
-  "Zeige deinen Partner wo du am liebsten berührt wirst.",
-  "Verbringt 2 Minuten nur mit Augenkontakt – kein Berühren.",
-  "Zeige deine sinnlichste Bewegung. Improvisation gefragt.",
-  "Schreibe dem Partner eine explizite SMS – auch wenn ihr nebeneinander sitzt.",
-  "Zeige, wie du einen Kuss auf den Hals landen würdest – in Zeitlupe.",
+  // ── BEIDE ──
+  { for:'both', text:"Küsst euch 90 Sekunden ohne Unterbrechung – wer zuerst aufhört, zieht sich aus." },
+  { for:'both', text:"Flüstere deinem Partner ins Ohr, was du heute Nacht als erstes mit ihm vorhast – so explizit wie möglich." },
+  { for:'both', text:"Küsse deinen Partner an drei Körperstellen, die er nicht erwartet – keine Lips erlaubt." },
+  { for:'both', text:"Mache deinem Partner einen vollständigen Striptease mit dem, was du gerade trägst." },
+  { for:'both', text:"Macht 2 Minuten nur Augenkontakt – kein Wort, kein Lachen, nur Blicke. Dann darf alles passieren." },
+  { for:'both', text:"Benutze einen Eiswürfel an einer Körperstelle deiner Wahl beim Partner – er darf sich nicht bewegen." },
+  { for:'both', text:"Stöhne für deinen Partner – 30 Sekunden, mit vollem Einsatz. Kein Lachen!" },
+  { for:'both', text:"Zeige deinem Partner exakt, wo und wie du am liebsten berührt wirst – führe seine Hand." },
+  { for:'both', text:"Verbindet euch gegenseitig die Augen und erkundet euch 3 Minuten nur mit den Händen." },
+  { for:'both', text:"Zieht euch gegenseitig ein Kleidungsstück aus – ganz langsam, kein Wort." },
+  { for:'both', text:"Massiert euch gegenseitig nackt – 4 Minuten, kein Genitalkontakt erlaubt. Qualvolle Versuchung!" },
+  { for:'both', text:"Spielt Domino: küsst euch im Wechsel an je einer neuen Körperstelle – bis keiner mehr Stellen findet." },
+  { for:'both', text:"Sagt euch laut und deutlich die drei explizitesten Dinge, die ihr gerade mit dem anderen machen wollt." },
+  { for:'both', text:"Tanze verführerisch für deinen Partner – 90 Sekunden, kein Lachen, maximaler Einsatz." },
+  { for:'both', text:"Küsse deinen Partner vom Ohr langsam den Hals hinunter, weiter zum Bauch – und stopp kurz bevor es interessant wird." },
+  { for:'both', text:"Beschreibe laut und in vollen Details deine heißeste Fantasie über deinen Partner." },
+  { for:'both', text:"Beißt euch sanft im Wechsel – Nacken, Schulter, Ohr – wer zuerst einen echten Stöhner rauslässt verliert." },
+  { for:'both', text:"Zeigt euch gegenseitig euren Lieblingsplatz am Körper des anderen – und küsst ihn direkt danach." },
+  { for:'both', text:"Macht 3 Minuten lang alles was ihr wollt – außer Küssen auf den Mund und Intimkontakt. Maximale Qual!" },
+  { for:'both', text:"Flüstert euch abwechselnd 5 explizite Dinge ins Ohr die ihr voneinander wollt – kein Ausweichen!" },
+
+  // ── FRAU macht für MANN ──
+  { for:'frau', text:"Küsse {MANN} vom Bauch langsam nach unten – bleib bei den Hüftknochen und schau ihn dabei an." },
+  { for:'frau', text:"Nimm {MANN} in den Mund und verwöhne ihn 2 Minuten lang – langsam, tief, mit Augenkontakt." },
+  { for:'frau', text:"Leck {MANN} seine Eier langsam und gründlich ab – nimm dir alle Zeit der Welt dabei." },
+  { for:'frau', text:"Leck langsam von {MANN}s Eiern nach oben – die ganze Länge, einmal rauf und runter." },
+  { for:'frau', text:"Nimm {MANN} so tief wie möglich in den Mund – halte kurz inne, schau ihn an, dann weiter." },
+  { for:'frau', text:"Sauger! Verwöhne {MANN} oral für 3 Minuten – wechsle dabei zwischen Saugen, Lecken und Halten." },
+  { for:'frau', text:"Stimuliere {MANN} mit der Hand für 2 Minuten – fest, gleichmäßig, mit direktem Augenkontakt." },
+  { for:'frau', text:"Reibe dich langsam an {MANN} – er darf die Hände nicht benutzen und sich nicht bewegen." },
+  { for:'frau', text:"Setz dich auf {MANN} und bestimme das Tempo – er darf nichts tun außer genießen." },
+  { for:'frau', text:"Küsse {MANN}s Bauch, Hüfte, Innenschenkel – komm ganz nah ran aber berühre ihn nicht direkt." },
+  { for:'frau', text:"Flüstere {MANN} ins Ohr was du gerade mit ihm machen willst – in vollen anzüglichen Details." },
+  { for:'frau', text:"Massiere {MANN} für 3 Minuten an den inneren Oberschenkeln – sehr langsam, sehr nah." },
+  { for:'frau', text:"Beiß {MANN} sanft in den Nacken – halte fest und lass deine Hände dabei wandern." },
+  { for:'frau', text:"Küsse jeden Zentimeter von {MANN}s Brust und Bauch – ohne ein Wort zu sagen." },
+  { for:'frau', text:"Zeige {MANN} genau wie du es dir von ihm wünschst – führe seine Hände selbst dorthin." },
+  { for:'frau', text:"Verwöhne {MANN} oral und benutze dabei deine Hand gleichzeitig – wechsle das Tempo nach Lust." },
+  { for:'frau', text:"Lecke {MANN} am Hals, beißt sanft ins Ohr und greif gleichzeitig nach unten." },
+  { for:'frau', text:"Mache {MANN} einen Handstimulation – aber hör jedes Mal auf, kurz bevor er zu stöhnen anfängt." },
+  { for:'frau', text:"Küsse {MANN} von den Lippen bis ganz unten durch – kein Körperteil darf ausgelassen werden." },
+  { for:'frau', text:"Befiel {MANN} zu liegen – dann mache mit ihm was immer du willst für 3 Minuten." },
+  { for:'frau', text:"Lutsch {MANN} einen – aber nur solange, bis er stöhnt. Dann Pause. Dann wieder anfangen." },
+  { for:'frau', text:"Sitze auf {MANN}s Gesicht und genieße es – er darf dabei die Hände nicht benutzen." },
+  { for:'frau', text:"Nimm {MANN}s Hand und zeige ihm Schritt für Schritt was du dir von ihm wünschst." },
+
+  // ── MANN macht für FRAU ──
+  { for:'mann', text:"Küsse {FRAU} vom Hals bis zur Hüfte – langsam, ohne Eile, kein Körperteil überspringen." },
+  { for:'mann', text:"Verwöhne {FRAU} oral für 3 Minuten – gleichmäßig und fokussiert. Sie darf stöhnen so laut sie will." },
+  { for:'mann', text:"Leck {FRAU} an ihrer empfindlichsten Stelle – 2 Minuten, gleicher Rhythmus, direkt und präzise." },
+  { for:'mann', text:"Massiere {FRAU} langsam die inneren Oberschenkel für 3 Minuten – komm ganz nah aber berühre sie nicht direkt." },
+  { for:'mann', text:"Benutze zwei Finger um {FRAU} zu stimulieren – langsam, tief, mit gleichmäßigem Druck, 2 Minuten." },
+  { for:'mann', text:"Küsse {FRAU} überall außer auf die Lippen für eine volle Minute – sie darf dir sagen wo es besser wird." },
+  { for:'mann', text:"Halte {FRAU} von hinten, küsse ihren Nacken und lass deine Hände überall hinwandern." },
+  { for:'mann', text:"Ziehe {FRAU} ganz langsam aus – küsse jede Körperstelle die dabei freigelegt wird." },
+  { for:'mann', text:"Beiß {FRAU} sanft in die Schulter und halte sie dabei von hinten fest." },
+  { for:'mann', text:"Lass {FRAU} auf dir sitzen und das Tempo bestimmen – du darfst dabei die Hände überall haben." },
+  { for:'mann', text:"Küsse {FRAU} 30 Sekunden lang nur am Hals und hinter den Ohren – deine Hände dürfen wandern." },
+  { for:'mann', text:"Leck und sauge bei {FRAU} an den Stellen, die sie am meisten aufdrehen – sie zeigt dir wo." },
+  { for:'mann', text:"Benutze Zunge und Finger gleichzeitig bei {FRAU} – und wechsle das Tempo nach ihrem Stöhnen." },
+  { for:'mann', text:"Flüstere {FRAU} ins Ohr was du gleich mit ihr vorhast – in vollen Details, ohne Scham." },
+  { for:'mann', text:"Halte {FRAU}s Handgelenke fest, küsse sie überall und lass sie sich nicht bewegen." },
+  { for:'mann', text:"Zeige {FRAU} genau wie du sie am liebsten berührst – führe ihre Hände über deinen Körper." },
+  { for:'mann', text:"Verwöhne {FRAU} oral bis sie bittet aufzuhören oder 4 Minuten vergangen sind." },
+  { for:'mann', text:"Massiere {FRAU} von Kopf bis Fuß – kein Körperteil ausgelassen, sehr langsam." },
+  { for:'mann', text:"Leck bei {FRAU} die Innenschenkel hoch – stop kurz vor dem Ziel, dann von vorne." },
+  { for:'mann', text:"Lecke {FRAU} an ihrer Klitoris mit gleichmäßigem Kreisen – bis sie dir sagt sie ist fertig." },
+  { for:'mann', text:"Reibe dich langsam an {FRAU} von hinten und küsse dabei ihren Nacken – 2 Minuten lang." },
+  { for:'mann', text:"Stecke {FRAU} in eine Position deiner Wahl und zeige ihr was du vorhast – ohne ein Wort." },
 ];
 
+// ══════════════════════════════════════════════════════════════════
+//  DATA - CHALLENGES
+// ══════════════════════════════════════════════════════════════════
 const challenges = [
-  { icon: "💋", name: "Küss-Marathon", text: "Küsst euch 3 Minuten lang durch – wechselt dabei jede 30 Sekunden die Art des Kusses.", time: 180 },
-  { icon: "🤲", name: "Massage-Duell", text: "5 Minuten Massage ohne Unterbrechung – dann getauscht!", time: 300 },
-  { icon: "👁️", name: "Augenkontakt-Challenge", text: "Schaut euch 2 Minuten ohne Ablachen in die Augen. Wer zuerst lacht, verliert!", time: 120 },
-  { icon: "🌡️", name: "Temperatur-Spiel", text: "Eiswürfel + warme Hände abwechselnd am Körper – 4 Minuten lang.", time: 240 },
-  { icon: "🫦", name: "Nur-Küsse", text: "3 Minuten nur küssen – keine Hände, kein Mehr. Nur Lippen.", time: 180 },
-  { icon: "🙈", name: "Blind-Berührung", text: "Verbundene Augen, 2 Minuten erkunden – nur mit den Fingerspitzen.", time: 120 },
-  { icon: "🎵", name: "Slow-Dance", text: "Tanzt zu eurem Lieblingslied – so nah wie möglich. Komplett.", time: 210 },
-  { icon: "💬", name: "Flüster-Fantasien", text: "Flüstert euch 2 Minuten abwechselnd Fantasien ins Ohr – immer detaillierter.", time: 120 },
-  { icon: "🌹", name: "Kompliment-Regen", text: "60 Sekunden: So viele Komplimente wie möglich, schnell & aus dem Herzen.", time: 60 },
-  { icon: "🔥", name: "10-Sekunden-Regel", text: "Berührt euch 3 Minuten lang – kein Körperteil darf länger als 10 Sekunden berührt werden.", time: 180 },
+  { icon:"💋", for:'both', name:"90-Sekunden Kuss", text:"Küsst euch 90 Sekunden am Stück – ohne Unterbrechung!", time:90 },
+  { icon:"🤲", for:'both', name:"Blind-Massage", text:"Verbindet euch die Augen und tastet euch gegenseitig ab – 3 Minuten Stille.", time:180 },
+  { icon:"👅", for:'frau', name:"Oral-Verwöhnen", text:"{FRAU} verwöhnt {MANN} oral – ohne Pause für 2 Minuten.", time:120 },
+  { icon:"🔥", for:'mann', name:"Verwöhn-Zeit", text:"{MANN} verwöhnt {FRAU} oral – fokussiert, gleichmäßig, 3 Minuten.", time:180 },
+  { icon:"🌊", for:'both', name:"Synchrones Atmen", text:"Legt euch eng aneinander und atmet 3 Minuten synchron – kein Sprechen.", time:180 },
+  { icon:"🎯", for:'both', name:"Körper-Erkundung", text:"Erkundet euch gegenseitig nur mit den Fingertipps – 4 Minuten, kein Sprechen.", time:240 },
+  { icon:"🧊", for:'both', name:"Eiswürfel-Challenge", text:"Lasst einen Eiswürfel auf dem Körper des Partners schmelzen – kein Zucken erlaubt!", time:120 },
+  { icon:"💃", for:'both', name:"Sinnlicher Tanz", text:"Tanzt eng zusammen – kein Musik nötig, nur euer Rhythmus. 2 Minuten.", time:120 },
+  { icon:"🕯️", for:'both', name:"Flüster-Fantasie", text:"Flüstert euch abwechselnd eure heißeste Fantasie ins Ohr – 3 Minuten.", time:180 },
+  { icon:"🫦", for:'frau', name:"Lippen-Verwöhnen", text:"{FRAU} küsst {MANN} überall außer auf die Lippen – 2 Minuten.", time:120 },
+  { icon:"🤲", for:'mann', name:"Finger-Massage", text:"{MANN} massiert {FRAU}s Körper nur mit den Fingerspitzen – 3 Minuten.", time:180 },
+  { icon:"🌹", for:'both', name:"Augenkontakt-Challenge", text:"Schaut euch in die Augen – kein Lachen, kein Sprechen – 2 Minuten.", time:120 },
+  { icon:"🔥", for:'both', name:"Langsam-Challenge", text:"Macht alles was ihr gerade tut – aber in halber Geschwindigkeit. 3 Minuten.", time:180 },
+  { icon:"🎭", for:'both', name:"Chef-Wechsel", text:"Eine Person bestimmt 3 Minuten lang alles – die andere gehorcht ohne Widerspruch.", time:180 },
+  { icon:"💦", for:'both', name:"Dusch-Abenteuer", text:"Duscht gemeinsam – schäumt euch gegenseitig vollständig ein. 5 Minuten.", time:300 },
+  { icon:"🪶", for:'both', name:"Feder-Kitzeln", text:"Kitzelt euch gegenseitig mit einer Feder oder einem weichen Stoff – 2 Minuten.", time:120 },
+  { icon:"👄", for:'frau', name:"Lutsch-Challenge", text:"{FRAU} lutsch {MANN} einen – Ziel: möglichst lange, möglichst intensiv. 3 Minuten.", time:180 },
+  { icon:"🌊", for:'mann', name:"Finger-Kunst", text:"{MANN} stimuliert {FRAU} mit den Fingern – 3 Minuten, gleichmäßig und fokussiert.", time:180 },
+  { icon:"🤗", for:'both', name:"Körper-Skulptur", text:"Formt euch gegenseitig in eine Position – und haltet sie 60 Sekunden.", time:60 },
+  { icon:"💋", for:'both', name:"Nackenmassage", text:"Massiert euch gegenseitig Hals und Nacken – je 2 Minuten.", time:240 },
+  { icon:"🏆", for:'both', name:"Meister der Berührung", text:"Berührt euch nur mit einem Körperteil – für 2 Minuten.", time:120 },
 ];
 
-const diceData = [
-  [ // Körper
-    [1, "Hals & Nacken – sanfte Aufmerksamkeit"],
-    [2, "Schultern & Rücken – langsam erkunden"],
-    [3, "Brust & Dekolleté – zärtlich berühren"],
-    [4, "Bauch & Hüfte – Küsse platzieren"],
-    [5, "Schenkel – sanft streicheln"],
-    [6, "Überraschung! – Spontan wählen"],
-  ],
-  [ // Küsse
-    [1, "Hauchzarte Küsse – kaum spürbar"],
-    [2, "Leidenschaftliche Küsse – 30 Sekunden"],
-    [3, "Hals-Küsse – mit Zunge"],
-    [4, "Kuss-Spur von oben nach unten"],
-    [5, "Biss-Küsse – sanft knabbern"],
-    [6, "Überall-Küsse – 1 Minute non-stop"],
-  ],
-  [ // Berührung
-    [1, "Nur Fingerspitzen – federleicht"],
-    [2, "Feste Massage – 2 Minuten"],
-    [3, "Eiswürfel-Spur – kalt & heiß"],
-    [4, "Blindes Ertasten – Augen zu"],
-    [5, "Nur Rücken erkunden – 90 Sek."],
-    [6, "Überraschungsberührung – frei wählen"],
-  ],
-  [ // Intensität
-    [1, "🌸 Zärtlich & langsam"],
-    [2, "💫 Romantisch & tief"],
-    [3, "🔥 Leidenschaftlich & heiß"],
-    [4, "⚡ Schnell & intensiv"],
-    [5, "🌋 Wild & ungezügelt"],
-    [6, "🎭 Überraschung – der Partner wählt!"],
-  ],
+// ══════════════════════════════════════════════════════════════════
+//  DATA - CHALLENGES
+// ══════════════════════════════════════════════════════════════════
+const challenges = [
+  { icon:"💋", for:'both', name:"90-Sekunden Kuss", text:"Küsst euch 90 Sekunden am Stück – wer zuerst aufhört muss eine Strafe machen.", time:90 },
+  { icon:"🤲", for:'both', name:"Blind-Erkundung", text:"Verbindet euch die Augen – erkundet euch gegenseitig nur mit Händen. 3 Minuten, kein Wort.", time:180 },
+  { icon:"👅", for:'frau', name:"Oral-Verwöhnen", text:"{FRAU} verwöhnt {MANN} oral – ohne Pause für 3 Minuten. Er darf sich nicht bewegen.", time:180 },
+  { icon:"🔥", for:'mann', name:"Cunnilingus-Challenge", text:"{MANN} verwöhnt {FRAU} oral – fokussiert, gleichmäßig, kein Stopp für 3 Minuten.", time:180 },
+  { icon:"🌊", for:'both', name:"Synchrones Atmen", text:"Legt euch eng aneinander – atmet 3 Minuten synchron. Kein Sprechen, maximale Nähe.", time:180 },
+  { icon:"🎯", for:'both', name:"Körper-Erkundung", text:"Erkundet euch mit Fingertipps – 4 Minuten, kein Sprechen, kein Genitalkontakt. Quälende Versuchung.", time:240 },
+  { icon:"🧊", for:'both', name:"Eiswürfel-Challenge", text:"Eiswürfel am Körper schmelzen lassen – kein Bewegen, kein Aufhören bis er weg ist.", time:120 },
+  { icon:"💃", for:'both', name:"Sinnlicher Tanz", text:"Tanzt eng – jeder Zentimeter Körperkontakt zählt. 2 Minuten maximale Nähe ohne Worte.", time:120 },
+  { icon:"🕯️", for:'both', name:"Flüster-Fantasie", text:"Flüstert euch abwechselnd eure expliziteste Fantasie ins Ohr – 3 Minuten, kein Ausweichen.", time:180 },
+  { icon:"🫦", for:'frau', name:"Körper-Küss-Tour", text:"{FRAU} küsst {MANN} überall außer auf die Lippen – kein Körperteil auslassen. 2 Minuten.", time:120 },
+  { icon:"🤲", for:'mann', name:"Finger-Verwöhnen", text:"{MANN} stimuliert {FRAU} mit Fingern – tief, gleichmäßig, 3 Minuten. Sie bestimmt das Tempo.", time:180 },
+  { icon:"🌹", for:'both', name:"Augenkontakt-Duell", text:"Schaut euch in die Augen – kein Lachen, kein Sprechen, 2 Minuten. Wer wegschaut erfüllt einen Wunsch.", time:120 },
+  { icon:"🔥", for:'both', name:"Zeitlupe", text:"Alles in halber Geschwindigkeit – jede Bewegung bewusst und langsam. 3 Minuten maximale Qual.", time:180 },
+  { icon:"🎭", for:'both', name:"Chef-Wechsel", text:"Einer bestimmt alles für 3 Minuten – der andere folgt widerspruchslos JEDER Anweisung.", time:180 },
+  { icon:"💦", for:'both', name:"Dusch-Abenteuer", text:"Duscht gemeinsam – schäumt euch vollständig von Kopf bis Fuß ein. 5 Minuten.", time:300 },
+  { icon:"👄", for:'frau', name:"Lutsch-Challenge", text:"{FRAU} lutsch {MANN} einen – so tief und intensiv wie möglich, wechselndes Tempo. 3 volle Minuten.", time:180 },
+  { icon:"🌊", for:'mann', name:"Zwei-Finger-Kunst", text:"{MANN} stimuliert {FRAU} mit zwei Fingern – tief, kreisend, 3 Minuten. Auf ihren Körper hören.", time:180 },
+  { icon:"🤗", for:'both', name:"Körperkontakt pur", text:"Legt euch nackt aufeinander – vollständiger Körperkontakt. 2 Minuten keine Bewegung, nur Wärme.", time:120 },
+  { icon:"💋", for:'both', name:"Nackenmassage", text:"Massiert euch gegenseitig Hals, Nacken und Schultern – je 2 Minuten pro Person.", time:240 },
+  { icon:"🔥", for:'frau', name:"Eier-Massage", text:"{FRAU} massiert {MANN} Hoden sehr sanft mit beiden Händen – vorsichtig und behutsam. 2 Minuten.", time:120 },
+  { icon:"💋", for:'mann', name:"Klitoris-Fokus", text:"{MANN} NUR ein Punkt mit Zunge – gleichmäßig, kreisend, nie aufhören. 3 Minuten.", time:180 },
+  { icon:"🌡️", for:'both', name:"Temperatur-Spiel", text:"Eiswürfel vs. warme Hände – wechselt kalt und warm an verschiedenen Körperstellen. 3 Minuten.", time:180 },
+  { icon:"🎭", for:'both', name:"Rollenspiel: Fremde", text:"Tut so als kennt ihr euch nicht – einer verführt den anderen als Fremder. 5 Minuten.", time:300 },
+  { icon:"🔒", for:'both', name:"Hände verboten", text:"Alles – aber keine Hände benutzen. Nur Lippen, Zunge, Körper. 2 Minuten.", time:120 },
+  { icon:"👁️", for:'both', name:"Solo-Striptease", text:"Einer liegt still und schaut zu – der andere macht einen Striptease. 2 Minuten voller Einsatz.", time:120 },
+  { icon:"🌹", for:'mann', name:"69-Challenge", text:"{MANN} und {FRAU} verwöhnen sich gleichzeitig oral – 3 volle Minuten 69-Position.", time:180 },
+  { icon:"🫦", for:'both', name:"Lippenmassage", text:"Massiert euren Partner nur mit den Lippen – kein Küssen, nur Berühren. 2 Minuten.", time:120 },
+  { icon:"🏆", for:'both', name:"Wer zuerst stöhnt verliert", text:"Verwöhnt euch gegenseitig – wer zuerst einen Stöhner rauslässt muss eine Strafe erfüllen.", time:180 },
+  { icon:"🔥", for:'both', name:"Nur eine Körperstelle", text:"Jeder darf nur EINE Körperstelle berühren – und muss 2 Minuten dabei bleiben.", time:120 },
+  { icon:"🎯", for:'both', name:"Befehl-Runde", text:"Einer sagt einen expliziten Befehl – der andere führt ihn sofort aus. 10 Befehle abwechselnd.", time:0 },
 ];
 
+// ══════════════════════════════════════════════════════════════════
+//  DATA - DICE CATEGORIES
+// ══════════════════════════════════════════════════════════════════
+const diceCategories = [
+  { // 0 - Körper
+    name:"Körper",
+    results: [
+      { for:'both', title:"Hals & Nacken", text:"Küss und beiß deinen Partner sanft am Hals – 60 Sekunden, deine Hände dürfen wandern." },
+      { for:'both', title:"Brust & Bauch", text:"Küsse langsam jeden Zentimeter der Brust und des Bauches – kein Stück auslassen." },
+      { for:'both', title:"Innere Oberschenkel", text:"Massiere die inneren Oberschenkel langsam aufwärts – stopp kurz vor dem Ziel. Quälend!" },
+      { for:'both', title:"Rücken & Po", text:"Massiere den Rücken deines Partners von oben bis ganz unten – und weiter." },
+      { for:'both', title:"Hüftknochen", text:"Küsse die Hüften deines Partners langsam – rechts und links, dann weiter nach unten." },
+      { for:'both', title:"Ohrläppchen", text:"Beiß sanft in die Ohrläppchen deines Partners, flüstere dabei etwas Heißes ins Ohr." },
+      { for:'frau', title:"Bauch-Reise", text:"{FRAU} küsst {MANN}s Bauch langsam runter – bleibt kurz bei den Hüften, schaut ihn an." },
+      { for:'mann', title:"Innenschenkel-Qual", text:"{MANN} küsst {FRAU}s Innenschenkel langsam rauf – stopp einen Zentimeter vor dem Ziel." },
+    ]
+  },
+  { // 1 - Oral
+    name:"Oral",
+    results: [
+      { for:'frau', title:"Blow-Job", text:"{FRAU} nimmt {MANN} in den Mund – langsam, tief, mit wechselndem Tempo. 90 Sekunden." },
+      { for:'frau', title:"Zungenspiel", text:"{FRAU} leckt {MANN} von unten nach oben – langsam, mehrmals, mit Augenkontakt." },
+      { for:'frau', title:"Eier lecken", text:"{FRAU} leckt {MANN} seine Eier langsam und gründlich ab – nimmt sich alle Zeit." },
+      { for:'frau', title:"Tief nehmen", text:"{FRAU} nimmt {MANN} so tief wie möglich – hält kurz, schaut hoch, macht weiter." },
+      { for:'frau', title:"Saugen", text:"{FRAU} saugt langsam und intensiv – wechselt zwischen Saugen, Lecken, mit Händen." },
+      { for:'mann', title:"Cunnilingus", text:"{MANN} verwöhnt {FRAU} oral – gleichmäßig und fokussiert, 2 Minuten kein Stopp." },
+      { for:'mann', title:"Zungenkreise", text:"{MANN} leckt {FRAU} in langsamen Kreisen – erst außen, dann innen, immer langsamer." },
+      { for:'mann', title:"Klitoris pur", text:"{MANN} fokussiert sich NUR auf die Klitoris – kreisend, gleichmäßig, nicht aufhören." },
+      { for:'both', title:"69-Position", text:"Verwöhnt euch gleichzeitig oral – klassische 69-Position. Kein Stopp bis beide sagen stop!" },
+    ]
+  },
+  { // 2 - Hände
+    name:"Hände",
+    results: [
+      { for:'frau', title:"Handjob", text:"{FRAU} stimuliert {MANN} mit der Hand – fest, gleichmäßig, mit Augenkontakt. 90 Sekunden." },
+      { for:'frau', title:"Doppel-Hand", text:"{FRAU} benutzt beide Hände für {MANN} – eine für den Schaft, eine für die Eier." },
+      { for:'mann', title:"Finger-Verwöhnen", text:"{MANN} stimuliert {FRAU} mit zwei Fingern – tief, kreisend, auf sie hören." },
+      { for:'mann', title:"Klitoris-Finger", text:"{MANN} konzentriert sich NUR auf einen Punkt mit dem Daumen – gleichmäßig, nicht aufhören." },
+      { for:'both', title:"Blind-Touch", text:"Verbindet die Augen – erkundet euren Partner nur mit Händen. 2 Minuten, kein Wort." },
+      { for:'frau', title:"Eier-Massage", text:"{FRAU} massiert {MANN} Hoden sehr sanft – beide Hände, sehr behutsam, 60 Sekunden." },
+      { for:'mann', title:"G-Punkt", text:"{MANN} stimuliert {FRAU} mit gebogenem Finger von innen – langsam, tief, kreisend." },
+      { for:'both', title:"Gegenseitig gleichzeitig", text:"Beide stimulieren sich gegenseitig mit den Händen gleichzeitig – kein Aufhören!" },
+    ]
+  },
+  { // 3 - Intensität
+    name:"Intensität",
+    results: [
+      { for:'both', title:"Hauch-zart", text:"Berührt euch nur hauchzart – Fingertipps, 2 Minuten. Kein Druck, nur Streicheln." },
+      { for:'both', title:"Mittel-intensiv", text:"Normalgeschwindigkeit aber volle Aufmerksamkeit – kein Ablenken, kein Innehalten." },
+      { for:'both', title:"Voll loslassen", text:"Lasst alles los – schnell, tief, intensiv, wild. Kein Zurückhalten für 3 Minuten!" },
+      { for:'both', title:"Dominanz-Runde", text:"Einer bestimmt ALLES für 3 Minuten – der andere folgt widerspruchslos." },
+      { for:'both', title:"Zärtlichkeit extrem", text:"Nur sanfte Berührungen – keine Intensität, nur Wärme und Streicheln. 3 Minuten." },
+      { for:'both', title:"Wild & ungezähmt", text:"Kein Limit – tut was sich richtig anfühlt ohne nachzudenken. 5 volle Minuten." },
+      { for:'both', title:"Stop & Go", text:"Wechselt zwischen langsam und rasend schnell – jeder Wechsel bestimmt der Partner." },
+      { for:'both', title:"Nur Reibung", text:"Keine Penetration – nur Reiben, Drücken, Körperkontakt. 3 Minuten maximale Spannung." },
+    ]
+  },
+  { // 4 - Rollenspiel
+    name:"Rollenspiel",
+    results: [
+      { for:'both', title:"Chef & Angestellte:r", text:"Einer ist Chef, einer Angestellte:r – der Chef gibt genaue Anweisungen. Kein Widerspruch." },
+      { for:'both', title:"Erste Nacht", text:"Tut so als wäre es euer allererstes Mal – schüchtern, aufgeregt, langsam tasten." },
+      { for:'both', title:"Fremde im Hotel", text:"Ihr kennt euch nicht – einer klopft an, der andere öffnet. Was passiert dann?" },
+      { for:'both', title:"Masseur & Klient", text:"Professionelle Ganzkörpermassage – die professionelle Distanz schwindet Stück für Stück." },
+      { for:'both', title:"Dom & Sub", text:"Einer hat vollständige Kontrolle – der andere folgt jeder Anweisung ohne Fragen." },
+      { for:'both', title:"Verbotene Affäre", text:"Ihr solltet nicht zusammen sein – aber ihr könnt nicht widerstehen. Diebische Lust!" },
+      { for:'both', title:"Arzt & Patient", text:"Einer ist Arzt, einer Patient – die Untersuchung wird sehr gründlich..." },
+      { for:'both', title:"Lehrerin & Schüler", text:"Einer lehrt, einer lernt – Belohnungen für richtiges Verhalten, Strafen für falsches." },
+    ]
+  },
+  { // 5 - Wild
+    name:"Wild",
+    results: [
+      { for:'both', title:"Sofort!", text:"Egal wo ihr sitzt – fange SOFORT an deinen Partner zu küssen und nicht aufhören." },
+      { for:'frau', title:"Überrasch ihn!", text:"{FRAU} überrascht {MANN} ohne Vorwarnung mit einem Blow-Job. Kein Wort davor." },
+      { for:'mann', title:"Überrasch sie!", text:"{MANN} überrascht {FRAU} ohne Vorwarnung mit Oral-Verwöhnen. Einfach machen." },
+      { for:'both', title:"Sofortwechsel!", text:"Tauscht in 10 Sekunden die Rollen komplett – wer oben war ist jetzt unten." },
+      { for:'both', title:"Neue Position!", text:"Wechselt sofort in eine Position die ihr noch NIE ausprobiert habt." },
+      { for:'both', title:"Öffentlichkeitsgefühl", text:"Tut alles – aber stellt euch vor, jemand könnte euch sehen. Pures Adrenalin!" },
+      { for:'frau', title:"Sitze auf ihm!", text:"{FRAU} setzt sich auf {MANN}s Gesicht – er darf die Hände nicht benutzen. Einfach genießen." },
+      { for:'mann', title:"Von hinten!", text:"{MANN} nimmt {FRAU} von hinten – stehend, kniend oder liegend – sofort und ohne Pause." },
+    ]
+  },
+];
+
+// ══════════════════════════════════════════════════════════════════
+//  DATA - HEIS KALT ZONES
+// ══════════════════════════════════════════════════════════════════
 const hkZones = [
-  { icon: "👂", cat: "Kopf", text: "Ohrläppchen, Nacken, Schläfen – wo reagiert er/sie am intensivsten?" },
-  { icon: "💋", cat: "Gesicht", text: "Wangenknochen, Mundwinkel, Stirn – welche Stelle ist am empfindlichsten?" },
-  { icon: "🌐", cat: "Hals", text: "Linke oder rechte Seite? Oben oder unten? Erkunde die empfindlichste Zone." },
-  { icon: "🦋", cat: "Schlüsselbein", text: "Das Schlüsselbein entlang – sanft oder mit Lippen?" },
-  { icon: "💪", cat: "Arme", text: "Innenseite der Arme und Handgelenke – sehr empfindlich!" },
-  { icon: "🤚", cat: "Hände", text: "Handflächen, Finger, die kleinen Handgelenk-Beugen erkunden." },
-  { icon: "🌊", cat: "Bauch", text: "Bauchnabel umkreisen oder die Seiten kitzeln – was löst was aus?" },
-  { icon: "🦵", cat: "Oberschenkel", text: "Die Innenseite der Oberschenkel – sanft streicheln von innen nach außen." },
-  { icon: "🦶", cat: "Füße", text: "Fußgewölbe, Zehenzwischenräume – wer hätte gedacht, wie empfindlich?" },
-  { icon: "🔙", cat: "Rücken", text: "Von den Schultern bis zum unteren Rücken – welche Stelle lässt Schauer?" },
+  { icon:"👂", cat:"Ohren", text:"Ohrläppchen und Inneres des Ohres – sanftes Hauchen und Lecken." },
+  { icon:"🦵", cat:"Innenschenkel", text:"Von innen am Knie langsam nach oben – so nah wie möglich." },
+  { icon:"🙆", cat:"Nacken", text:"Nackengrube und Halsseiten – besonders empfindlich für Küsse und Bisse." },
+  { icon:"🦶", cat:"Füße & Zehen", text:"Fußsohlen und Zehen – sanfte Massage und zärtliche Küsse." },
+  { icon:"🔙", cat:"Unterer Rücken", text:"Unterer Rücken und Steißbein – wo Schauer ihren Ursprung haben." },
+  { icon:"💪", cat:"Armbeugen", text:"Innenseite der Ellbogen – oft vergessen, extrem empfindlich." },
+  { icon:"🫁", cat:"Brust", text:"Brustzone und Dekolleté – kreisende Bewegungen, langsam steigern." },
+  { icon:"🦷", cat:"Halsbeuge", text:"Wo Hals auf Schulter trifft – sanftes Beißen und Saugen." },
+  { icon:"🍑", cat:"Po", text:"Pobacken kneten und die Mitte mit Fingerspitzen erkunden." },
+  { icon:"🫦", cat:"Lippen", text:"Nicht küssen – nur mit dem Finger umfahren, berühren, streichen." },
+  { icon:"🤷", cat:"Schulterblätter", text:"Zwischen den Schulterblättern – mit Fingernägeln zart kratzen." },
+  { icon:"🦵", cat:"Kniekehlen", text:"Kniekehlen – feines Hauchen und sanfte Küsse auf die Rückseite." },
+  { icon:"🫀", cat:"Seitliche Rippen", text:"Seitliche Rippen kitzeln und streicheln gleichzeitig." },
+  { icon:"💆", cat:"Kopfhaut", text:"Mit allen 10 Fingern massieren – Kopfhaut, Schläfen, Haaransatz." },
+  { icon:"👁️", cat:"Schläfen", text:"Schläfen und Stirn – sanfte Kreise und Küsse." },
+  { icon:"🦶", cat:"Achseln", text:"Innenseite der Achseln – hauchzartes Streicheln mit den Fingerspitzen." },
+  { icon:"🍑", cat:"Steißbein", text:"Direkt auf dem Steißbein – leichter Druck mit dem Daumen und kreisende Bewegungen." },
+  { icon:"🔥", cat:"Intim-Bereich", text:"Direkt am Genitalbereich – aber NICHT direkt berühren. Nur hauchzart drumherum." },
 ];
 
-let currentPosition = null;
-let todMode = 'wahrheit';
-let usedTruths = [], usedDares = [];
-let timerInterval = null, timerSeconds = 0, timerRunning = false;
-let selectedDiceCat = 0;
-let hkPlayer = 1;
-let wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
-let selectedChallenge = null;
+// ══════════════════════════════════════════════════════════════════
+//  DATA - STRIP QUESTIONS
+// ══════════════════════════════════════════════════════════════════
+const stripQuestions = [
+  // Wissen
+  { icon:"🧠", cat:"Wissen", text:"Welche Hauptstadt hat Australien? (Canberra)" },
+  { icon:"🔢", cat:"Mathe", text:"Wie viel ist 17 × 8? (136)" },
+  { icon:"🌍", cat:"Geografie", text:"Welcher Fluss fließt durch Paris? (Seine)" },
+  { icon:"🎵", cat:"Musik", text:"Von wem ist das Album 'Thriller'? (Michael Jackson)" },
+  { icon:"📚", cat:"Literatur", text:"Wer schrieb 'Faust'? (Goethe)" },
+  { icon:"🚀", cat:"Weltraum", text:"Welcher Planet ist der größte im Sonnensystem? (Jupiter)" },
+  { icon:"🏆", cat:"Sport", text:"Wie viele Spieler hat eine Fußballmannschaft auf dem Feld? (11)" },
+  { icon:"📱", cat:"Technik", text:"In welchem Jahr wurde das erste iPhone vorgestellt? (2007)" },
+  { icon:"🌍", cat:"Geografie", text:"Wie heißt die längste Mauer der Welt? (Chinesische Mauer)" },
+  { icon:"🦁", cat:"Tiere", text:"Wie heißt die schnellste Landkatze der Welt? (Gepard)" },
+  // Sex-Wahrheit
+  { icon:"🎭", cat:"Wahrheit", text:"Nenne eine Sache, die du heimlich an mir liebst – möglichst explizit!" },
+  { icon:"🤫", cat:"Wahrheit", text:"Was war dein wildester Gedanke über mich heute?" },
+  { icon:"🔥", cat:"Wahrheit", text:"Welche sexuelle Fantasie hast du noch nie zugegeben?" },
+  { icon:"💋", cat:"Wahrheit", text:"Was tust du heimlich wenn du allein bist und an mich denkst?" },
+  { icon:"👅", cat:"Wahrheit", text:"Was findest du bei mir körperlich am aufregendsten – beschreibe es genau." },
+  { icon:"🌋", cat:"Wahrheit", text:"Was würdest du sofort tun wenn ich sage: heute ist alles erlaubt?" },
+  { icon:"🔮", cat:"Wahrheit", text:"Was ist das Heißeste das du mit mir gemacht hast – in Details?" },
+  { icon:"🎯", cat:"Wahrheit", text:"Wo an meinem Körper magst du am liebsten berühren? Und warum?" },
+  // Sex-Pflicht
+  { icon:"💋", cat:"Pflicht", text:"Küsse mich an einer unerwarteten Körperstelle – mindestens 20 Sekunden." },
+  { icon:"🔥", cat:"Pflicht", text:"Zeige mir in 30 Sekunden wie du mich am liebsten küsst – voller Einsatz!" },
+  { icon:"👅", cat:"Pflicht", text:"Flüstere mir ins Ohr was du gerade mit mir machen willst – in allen Details." },
+  { icon:"🌶️", cat:"Pflicht", text:"Küsse mich 45 Sekunden am Hals und hinter den Ohren – kein Innehalten." },
+  { icon:"🔥", cat:"Pflicht", text:"Massiere mich 60 Sekunden dort wo ich sage – kein Widerspruch." },
+  { icon:"💋", cat:"Pflicht", text:"Stöhne für mich – 20 Sekunden laut, kein Lachen." },
+  { icon:"🎭", cat:"Pflicht", text:"Beschreibe in einem Satz was du gleich mit mir vorhast – je expliziter desto besser." },
+  { icon:"🌊", cat:"Pflicht", text:"Leck mich an einer Stelle meiner Wahl – 30 Sekunden." },
+  { icon:"💥", cat:"Pflicht", text:"Zeige mir wie du wirklich küsst – ohne Zurückhalten, 45 Sekunden." },
+  { icon:"🏆", cat:"Pflicht", text:"Tanze für mich – 30 Sekunden Striptease mit dem, was du trägst." },
+];
 
+// ══════════════════════════════════════════════════════════════════
+//  SMART POOLS
+// ══════════════════════════════════════════════════════════════════
+const positionPool = new SmartPool(positions);
+const punishPool = new SmartPool(punishments);
+const hkPool = new SmartPool(hkZones);
+const stripPool = new SmartPool(stripQuestions);
+const challengePool = new SmartPool(challenges);
+
+let truthPool, darePool;
+function rebuildTodPools() {
+  // Build gender-filtered versions
+  const filteredTruths = truths.filter(t =>
+    t.for === 'both' ||
+    (t.for === 'mann') ||
+    (t.for === 'frau')
+  );
+  const filteredDares = dares.filter(d =>
+    d.for === 'both' ||
+    (d.for === 'mann') ||
+    (d.for === 'frau')
+  );
+  truthPool = new SmartPool(filteredTruths);
+  darePool = new SmartPool(filteredDares);
+}
+rebuildTodPools();
+
+const dicePools = diceCategories.map(cat => new SmartPool(cat.results));
+
+// ══════════════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════════════
+function forClass(forVal) {
+  if (forVal === 'mann') return 'male';
+  if (forVal === 'frau') return 'female';
+  return 'both';
+}
+function forLabel(forVal) {
+  if (forVal === 'mann') return mannName();
+  if (forVal === 'frau') return frauName();
+  return 'Beide';
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.getElementById(id).scrollTop = 0;
 }
-function goHome() {
-  stopTimer();
-  showScreen('home');
-}
-
-function goHome_() { showScreen('home'); }
 function goHome() { stopTimer(); showScreen('home'); }
+function openTruthDare() { rebuildTodPools(); showScreen('truthdare'); }
 
-window.goHome = goHome;
-window.showScreen = showScreen;
-
+// ══════════════════════════════════════════════════════════════════
+//  ROULETTE
+// ══════════════════════════════════════════════════════════════════
+let currentPosition = null;
 function spinRoulette() {
   const btn = document.getElementById('spin-btn');
   const emoji = document.getElementById('r-emoji');
@@ -876,7 +1507,7 @@ function spinRoulette() {
 
   row.style.display = 'none';
   btn.disabled = true;
-  btn.textContent = '🎰 Drehe ...';
+  btn.textContent = '🎰 Drehe …';
   emoji.classList.add('spinning');
 
   let count = 0;
@@ -885,10 +1516,10 @@ function spinRoulette() {
     emoji.textContent = r.emoji;
     name.textContent = r.name;
     count++;
-    if (count > 14) {
+    if (count > 16) {
       clearInterval(interval);
       emoji.classList.remove('spinning');
-      currentPosition = positions[Math.floor(Math.random() * positions.length)];
+      currentPosition = positionPool.next();
       emoji.textContent = currentPosition.emoji;
       name.textContent = currentPosition.name;
       hint.textContent = currentPosition.hint;
@@ -896,7 +1527,7 @@ function spinRoulette() {
       btn.disabled = false;
       btn.textContent = '🎰 Nochmal drehen';
     }
-  }, 80);
+  }, 75);
 }
 
 function acceptPosition() {
@@ -909,17 +1540,23 @@ function acceptPosition() {
 }
 
 function declinePosition() {
-  const p = punishments[Math.floor(Math.random() * punishments.length)];
+  const p = punishPool.next();
   document.getElementById('pun-icon').textContent = p.icon;
-  document.getElementById('pun-desc').textContent = p.text;
+  document.getElementById('pun-desc').textContent = tpl(p.text);
   openOverlay('punish-overlay');
 }
 
+// ══════════════════════════════════════════════════════════════════
+//  TRUTH OR DARE
+// ══════════════════════════════════════════════════════════════════
+let todMode = 'wahrheit';
+let todCount = { wahrheit: 0, pflicht: 0 };
+
 function setTodMode(mode) {
   todMode = mode;
-  document.getElementById('tab-truth').classList.toggle('active', mode === 'wahrheit');
-  document.getElementById('tab-dare').classList.toggle('active', mode === 'pflicht');
-  document.getElementById('tab-mix').classList.toggle('active', mode === 'mix');
+  ['wahrheit','pflicht','mix'].forEach(m => {
+    document.getElementById('tab-' + (m === 'wahrheit' ? 'truth' : m === 'pflicht' ? 'dare' : 'mix')).classList.toggle('active', mode === m);
+  });
   nextTod();
 }
 
@@ -929,34 +1566,49 @@ function nextTod() {
 
   const icon = document.getElementById('tod-icon');
   const text = document.getElementById('tod-text');
+  const badge = document.getElementById('tod-for-badge');
+  const counter = document.getElementById('tod-counter');
 
+  let item;
   if (mode === 'wahrheit') {
-    if (usedTruths.length >= truths.length) usedTruths = [];
-    let pool = truths.filter((_, i) => !usedTruths.includes(i));
-    const idx = truths.indexOf(pool[Math.floor(Math.random() * pool.length)]);
-    usedTruths.push(idx);
+    item = truthPool.next();
     icon.textContent = '🤫';
-    text.textContent = truths[idx];
+    todCount.wahrheit++;
+    counter.textContent = `Wahrheit #${todCount.wahrheit}`;
   } else {
-    if (usedDares.length >= dares.length) usedDares = [];
-    let pool = dares.filter((_, i) => !usedDares.includes(i));
-    const idx = dares.indexOf(pool[Math.floor(Math.random() * pool.length)]);
-    usedDares.push(idx);
+    item = darePool.next();
     icon.textContent = '🔥';
-    text.textContent = dares[idx];
+    todCount.pflicht++;
+    counter.textContent = `Pflicht #${todCount.pflicht}`;
   }
+
+  badge.style.display = 'inline-block';
+  badge.className = 'tod-for-badge ' + forClass(item.for);
+  badge.textContent = forLabel(item.for);
+  text.textContent = tpl(item.text);
   text.style.animation = 'none';
   setTimeout(() => { text.style.animation = 'fadeUp .3s ease'; }, 10);
 }
 
+// ══════════════════════════════════════════════════════════════════
+//  CHALLENGES
+// ══════════════════════════════════════════════════════════════════
+let timerInterval = null, timerSeconds = 0, timerRunning = false;
+let selectedChallenge = null;
+
 function newChallenge() {
   stopTimer();
-  const ch = challenges[Math.floor(Math.random() * challenges.length)];
+  const ch = challengePool.next();
   selectedChallenge = ch;
   document.getElementById('ch-icon').textContent = ch.icon;
   document.getElementById('ch-name').textContent = ch.name;
-  document.getElementById('ch-text').textContent = ch.text;
+  document.getElementById('ch-text').textContent = tpl(ch.text);
   
+  const forEl = document.getElementById('ch-for');
+  forEl.style.display = 'inline-block';
+  forEl.className = 'challenge-for ' + forClass(ch.for);
+  forEl.textContent = forLabel(ch.for);
+
   timerSeconds = ch.time;
   updateTimerDisplay();
   document.getElementById('timer-label').style.display = 'block';
@@ -982,15 +1634,15 @@ function toggleTimer() {
     timerRunning = true;
     document.getElementById('btn-pause').textContent = '⏸ Pause';
     timerInterval = setInterval(() => {
-      if (timerSeconds <= 0) {
+      if (timerSeconds > 0) {
+        timerSeconds--;
+        updateTimerDisplay();
+      } else {
         clearInterval(timerInterval);
         timerRunning = false;
-        document.getElementById('timer-display').textContent = '✓ Zeit!';
-        document.getElementById('timer-display').style.color = 'var(--green)';
-        return;
+        document.getElementById('timer-display').textContent = '✓ Fertig!';
+        document.getElementById('btn-pause').textContent = '✓ Erledigt';
       }
-      timerSeconds--;
-      updateTimerDisplay();
     }, 1000);
   }
 }
@@ -998,100 +1650,146 @@ function toggleTimer() {
 function stopTimer() {
   clearInterval(timerInterval);
   timerRunning = false;
-  selectedChallenge = null;
-  document.getElementById('timer-display').style.color = 'var(--cream)';
+  timerSeconds = 0;
 }
 
+// ══════════════════════════════════════════════════════════════════
+//  DICE
+// ══════════════════════════════════════════════════════════════════
+let selectedDiceCat = 0;
 const diceFaces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
 
-function selectDiceCat(i) {
-  selectedDiceCat = i;
-  [0,1,2,3].forEach(n => {
-    document.getElementById('dc-'+n).classList.toggle('selected', n === i);
-  });
+function selectDiceCat(idx) {
+  document.querySelectorAll('.dice-category').forEach((el, i) =>
+    el.classList.toggle('selected', i === idx)
+  );
+  selectedDiceCat = idx;
 }
 
 function rollDice() {
-  const face = document.getElementById('dice-face');
-  face.classList.add('shaking');
-  setTimeout(() => face.classList.remove('shaking'), 400);
+  const faceEl = document.getElementById('dice-face');
+  faceEl.classList.add('rolling');
+  setTimeout(() => faceEl.classList.remove('rolling'), 500);
 
   let count = 0;
-  const interval = setInterval(() => {
-    face.textContent = diceFaces[Math.floor(Math.random() * 6)];
+  const roll = setInterval(() => {
+    faceEl.textContent = diceFaces[Math.floor(Math.random() * 6)];
     count++;
     if (count > 10) {
-      clearInterval(interval);
-      const roll = Math.floor(Math.random() * 6);
-      face.textContent = diceFaces[roll];
-      const result = diceData[selectedDiceCat][roll];
-      document.getElementById('dice-result-title').textContent = `Würfel ${result[0]}`;
-      document.getElementById('dice-result-text').textContent = result[1];
+      clearInterval(roll);
+      const result = dicePools[selectedDiceCat].next();
+      const titleEl = document.getElementById('dice-result-title');
+      const textEl = document.getElementById('dice-result-text');
+      const badge = document.getElementById('dice-for-badge');
+      
+      badge.style.display = 'inline-block';
+      badge.className = 'dice-result-for ' + forClass(result.for);
+      badge.textContent = forLabel(result.for);
+      titleEl.textContent = result.title;
+      textEl.textContent = tpl(result.text);
+      titleEl.style.animation = 'none';
+      setTimeout(() => { titleEl.style.animation = 'fadeUp .3s ease'; }, 10);
     }
-  }, 60);
+  }, 80);
 }
 
-const levelColors = { zärtlich: '#c86090', heiß: '#c84020', wild: '#8020c8' };
-const levelIcons = { zärtlich: '💕', heiß: '🔥', wild: '🌋' };
-const whoLabels = { both: 'Für Beide', er: 'Von Ihm', sie: 'Von Ihr' };
-
-function renderWishes() {
-  const list = document.getElementById('wish-list');
-  document.getElementById('wish-count').textContent = wishes.length;
-  if (wishes.length === 0) {
-    list.innerHTML = '<div class="wish-empty">Noch keine Wünsche. Seid mutig! 💌</div>';
-    return;
-  }
-  list.innerHTML = wishes.map((w, i) => `
-    <div class="wish-item" style="--wish-color:${levelColors[w.level]}">
-      <span class="wish-item-icon">${levelIcons[w.level]}</span>
-      <div class="wish-item-content">
-        <div class="wish-item-text">${w.text}</div>
-        <div class="wish-item-tag">${whoLabels[w.who]} · ${w.level}</div>
-      </div>
-      <button class="wish-item-del" onclick="deleteWish(${i})">✕</button>
-    </div>
-  `).join('');
-}
+// ══════════════════════════════════════════════════════════════════
+//  WISHBOX
+// ══════════════════════════════════════════════════════════════════
+let wishes = JSON.parse(localStorage.getItem('wishes') || '[]');
+const wishColors = { zärtlich:'#a064ea', heiß:'#c9204a', wild:'#d4a84b' };
+const wishIcons = { zärtlich:'💕', heiß:'🔥', wild:'🌋' };
 
 function addWish() {
   const text = document.getElementById('wish-input').value.trim();
   if (!text) return;
-  wishes.push({
-    text,
-    who: document.getElementById('wish-who').value,
-    level: document.getElementById('wish-level').value
-  });
+  const who = document.getElementById('wish-who').value;
+  const level = document.getElementById('wish-level').value;
+  const whoName = who === 'both' ? 'Beide' : (who === 'p1' ? players.p1.name : players.p2.name);
+  wishes.push({ text, who, whoName, level, id: Date.now() });
   localStorage.setItem('wishes', JSON.stringify(wishes));
   document.getElementById('wish-input').value = '';
   renderWishes();
 }
 
-function deleteWish(i) {
-  wishes.splice(i, 1);
+function deleteWish(id) {
+  wishes = wishes.filter(w => w.id !== id);
   localStorage.setItem('wishes', JSON.stringify(wishes));
   renderWishes();
 }
 
 function drawWish() {
-  if (wishes.length === 0) { alert('Fügt erst Wünsche hinzu! 💌'); return; }
+  if (!wishes.length) return alert('Noch keine Wünsche! Fügt erst welche hinzu.');
   const w = wishes[Math.floor(Math.random() * wishes.length)];
   document.getElementById('wish-drawn-text').textContent = w.text;
-  document.getElementById('wish-drawn-meta').textContent = `${whoLabels[w.who]} · Intensität: ${w.level} ${levelIcons[w.level]}`;
+  document.getElementById('wish-drawn-meta').textContent = `${wishIcons[w.level]} ${w.whoName} — ${w.level}`;
   openOverlay('wish-overlay');
 }
 
-function setHkPlayer(n) {
-  hkPlayer = n;
-  document.getElementById('hk-p1').classList.toggle('active', n === 1);
-  document.getElementById('hk-p2').classList.toggle('active', n === 2);
+function renderWishes() {
+  const list = document.getElementById('wish-list');
+  document.getElementById('wish-count').textContent = wishes.length;
+  if (!wishes.length) {
+    list.innerHTML = '<div class="wish-empty">Noch keine Wünsche. Seid mutig! 💌</div>';
+    return;
+  }
+  list.innerHTML = wishes.map(w => `
+    <div class="wish-item" style="--wish-color:${wishColors[w.level]}">
+      <span class="wish-item-icon">${wishIcons[w.level]}</span>
+      <div class="wish-item-content">
+        <div class="wish-item-text">${w.text}</div>
+        <div class="wish-item-meta">${w.whoName} · ${w.level}</div>
+      </div>
+      <button class="wish-item-del" onclick="deleteWish(${w.id})">✕</button>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  STRIP GAME
+// ══════════════════════════════════════════════════════════════════
+let stripPlayer = 1;
+let stripScores = [0, 0];
+
+function setStripPlayer(p) {
+  stripPlayer = p;
+  document.getElementById('sp-btn1').classList.toggle('active', p === 1);
+  document.getElementById('sp-btn2').classList.toggle('active', p === 2);
+}
+
+function newStripQuestion() {
+  const q = stripPool.next();
+  document.getElementById('strip-q-icon').textContent = q.icon;
+  document.getElementById('strip-q-cat').textContent = q.cat;
+  document.getElementById('strip-q-text').textContent = tpl(q.text);
+}
+
+function stripResult(success) {
+  if (!success) {
+    const idx = stripPlayer - 1;
+    stripScores[idx]++;
+    document.getElementById(`strip-score${stripPlayer}`).textContent = stripScores[idx];
+  }
+  // Auto-switch player
+  setStripPlayer(stripPlayer === 1 ? 2 : 1);
+  newStripQuestion();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  HEISS KALT
+// ══════════════════════════════════════════════════════════════════
+let hkPlayer = 1;
+
+function setHkPlayer(p) {
+  hkPlayer = p;
+  document.getElementById('hk-p1').classList.toggle('active', p === 1);
+  document.getElementById('hk-p2').classList.toggle('active', p === 2);
 }
 
 function newHkZone() {
-  const z = hkZones[Math.floor(Math.random() * hkZones.length)];
-  const who = hkPlayer === 1 ? 'Er erkundet' : 'Sie erkundet';
+  const z = hkPool.next();
   document.getElementById('hk-icon').textContent = z.icon;
-  document.getElementById('hk-cat').textContent = z.cat + ' · ' + who;
+  document.getElementById('hk-cat').textContent = z.cat;
   document.getElementById('hk-text').textContent = z.text;
   document.getElementById('hk-feedback').textContent = '';
 }
@@ -1100,10 +1798,12 @@ function hkFeedback(msg) {
   const el = document.getElementById('hk-feedback');
   el.textContent = msg;
   el.style.animation = 'none';
-  setTimeout(() => { el.style.animation = 'fadeUp .25s ease'; }, 10);
+  setTimeout(() => { el.style.animation = 'fadeUp .3s ease'; }, 10);
 }
 
-
+// ══════════════════════════════════════════════════════════════════
+//  OVERLAYS
+// ══════════════════════════════════════════════════════════════════
 function openOverlay(id) {
   document.getElementById(id).classList.add('active');
 }
@@ -1111,37 +1811,27 @@ function closeOverlay(id) {
   document.getElementById(id).classList.remove('active');
 }
 
+// ══════════════════════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════════════════════
+updateUI();
 renderWishes();
 
-// PWA Install hint
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  window._deferredPrompt = e;
-});
-</script>
-
-<!-- PWA Manifest inline -->
-<script>
-(function() {
-  const manifest = {
-    name: "LiebesSpiel",
-    short_name: "LiebesSpiel",
-    description: "Das intime Spiel für zwei",
-    start_url: "./",
-    display: "standalone",
-    background_color: "#080409",
-    theme_color: "#0d0208",
-    orientation: "portrait",
-    icons: [
-      { src: "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="40" fill="#1a0820"/><text y="130" x="96" text-anchor="middle" font-size="120">🌹</text></svg>'), sizes: "192x192", type: "image/svg+xml" }
-    ]
-  };
-  const blob = new Blob([JSON.stringify(manifest)], {type:'application/manifest+json'});
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('link');
-  link.rel = 'manifest'; link.href = url;
-  document.head.appendChild(link);
-})();
+// PWA Manifest
+const manifest = {
+  name: "LiebesSpiel ✦",
+  short_name: "LiebesSpiel",
+  start_url: ".",
+  display: "standalone",
+  background_color: "#080409",
+  theme_color: "#0d0208",
+  icons: [{ src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💋</text></svg>", sizes: "512x512", type: "image/svg+xml" }]
+};
+const mblob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+const murl = URL.createObjectURL(mblob);
+const mlink = document.createElement('link');
+mlink.rel = 'manifest'; mlink.href = murl;
+document.head.appendChild(mlink);
 </script>
 </body>
 </html>
