@@ -612,6 +612,46 @@ html, body {
 .strip-score-name { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; }
 .strip-score-num { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); }
 
+/* ─── INTENSITY SELECTOR ─── */
+.intensity-bar {
+  display:flex; gap:.5rem; padding:0 1.5rem .6rem;
+}
+.intensity-btn {
+  flex:1; padding:.6rem .3rem; border-radius:50px;
+  border:1px solid rgba(255,255,255,.1);
+  background:var(--card2); color:var(--muted);
+  font-family:'Playfair Display',serif; font-size:.82rem;
+  cursor:pointer; text-align:center; transition:all .2s;
+}
+.intensity-btn:active { transform:scale(.96); }
+.intensity-btn.active-1 { background:rgba(160,100,234,.18); border-color:rgba(160,100,234,.5); color:var(--purple); }
+.intensity-btn.active-2 { background:rgba(201,32,74,.15); border-color:rgba(201,32,74,.4); color:var(--accent2); }
+.intensity-btn.active-3 { background:rgba(212,168,75,.15); border-color:rgba(212,168,75,.4); color:var(--gold); }
+.home-round-row {
+  display:flex; justify-content:center; gap:1.5rem;
+  padding:.1rem 1.5rem .3rem; font-size:.78rem; color:var(--muted);
+  letter-spacing:.06em;
+}
+.round-chip {
+  background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+  border-radius:50px; padding:.2rem .8rem;
+}
+
+/* ─── TOD SKIP ─── */
+.tod-actions { margin-top:.7rem; display:flex; gap:.7rem; }
+.btn-skip {
+  flex:1; padding:.85rem;
+  background:rgba(138,106,122,.1); border:1px solid rgba(138,106,122,.25);
+  border-radius:50px; color:var(--muted);
+  font-family:'Playfair Display',serif; font-size:.9rem; cursor:pointer;
+  transition:background .15s;
+}
+.btn-skip:active { background:rgba(138,106,122,.2); }
+.skip-counter {
+  text-align:center; font-size:.75rem; color:var(--muted);
+  margin-top:.35rem; letter-spacing:.08em;
+}
+
 /* ─── ANIMATIONS ─── */
 .spinning { animation:spin .08s linear infinite; }
 </style>
@@ -673,6 +713,15 @@ html, body {
     <h1 class="home-title">LiebesSpiel ✦</h1>
     <p class="home-sub">Wählt einen Spielmodus</p>
   </div>
+  <div class="intensity-bar">
+    <button class="intensity-btn active-2" id="ibtn-1" onclick="setIntensity(1)">🌹 Sanft</button>
+    <button class="intensity-btn" id="ibtn-2" onclick="setIntensity(2)">🔥 Heiß</button>
+    <button class="intensity-btn" id="ibtn-3" onclick="setIntensity(3)">🌋 Wild</button>
+  </div>
+  <div class="home-round-row" id="round-row" style="display:none;">
+    <span class="round-chip" id="round-chip">Runde 0</span>
+    <span class="round-chip" id="turn-chip">— am Zug</span>
+  </div>
   <div class="modes-grid">
     <div class="mode-card" style="--card-accent:#c9204a;" onclick="showScreen('roulette')">
       <span class="mode-icon">🎰</span>
@@ -682,7 +731,7 @@ html, body {
     <div class="mode-card" style="--card-accent:#d4a84b;" onclick="openTruthDare()">
       <span class="mode-icon">🎭</span>
       <div class="mode-name">Wahrheit oder Pflicht</div>
-      <div class="mode-desc">Enthüllungen & Aufgaben</div>
+      <div class="mode-desc">Enthüllungen &amp; Aufgaben</div>
     </div>
     <div class="mode-card" style="--card-accent:#2dd4a0;" onclick="openChallenges()">
       <span class="mode-icon">⏱️</span>
@@ -704,13 +753,19 @@ html, body {
       <div class="mode-name">Strip-Spiel</div>
       <div class="mode-desc">Kleidung Stück für Stück</div>
     </div>
+    <div class="mode-card" style="--card-accent:#a064ea;" onclick="showScreen('heisskalte')">
+      <span class="mode-icon">🎯</span>
+      <div class="mode-name">Heiß oder Kalt</div>
+      <div class="mode-desc">Körperstellen entdecken</div>
+    </div>
+    <div class="mode-card" style="--card-accent:#2dd4a0;" onclick="openSpontanModus()">
+      <span class="mode-icon">⚡</span>
+      <div class="mode-name">Spontan-Modus</div>
+      <div class="mode-desc">Zufällige Überraschung</div>
+    </div>
   </div>
   <div class="home-footer">
     <button class="btn-settings" onclick="showScreen('setup')">⚙️ Spieler ändern</button>
-    <div class="mode-card" style="--card-accent:#a064ea;padding:.7rem 1rem;flex:1;text-align:center;cursor:pointer;" onclick="showScreen('heisskalte')">
-      <span style="font-size:1.2rem;">🎯</span>
-      <div style="font-size:.8rem;color:var(--cream);margin-top:.1rem;">Heiß oder Kalt</div>
-    </div>
   </div>
 </div>
 
@@ -750,11 +805,16 @@ html, body {
   <div class="tod-card-area">
     <div class="tod-card">
       <div class="tod-icon" id="tod-icon">🎭</div>
+      <div class="tod-for-badge both" id="tod-turn-badge" style="display:none;"></div>
       <div class="tod-for-badge both" id="tod-for-badge" style="display:none;"></div>
       <div class="tod-text" id="tod-text">Drücke „Nächste" um zu beginnen!</div>
     </div>
     <div class="tod-counter" id="tod-counter"></div>
-    <button class="btn-next" onclick="nextTod()">Nächste →</button>
+    <div style="display:flex;gap:.7rem;margin-top:.8rem;">
+      <button class="btn-next" style="flex:2;margin-top:0;" onclick="nextTod()">Nächste →</button>
+      <button class="btn-skip" onclick="skipTod()">⏭ Passen</button>
+    </div>
+    <div class="skip-counter" id="skip-counter"></div>
   </div>
 </div>
 
@@ -1084,10 +1144,15 @@ const positions = [
   { name:"Schulter-Position", emoji:"🏋️", hint:"Acrobatisch und unglaublich tief.", desc:"Sie liegt auf dem Rücken, Beine über seine Schultern gelegt. Er kniet und dringt tief ein. Maximale Tiefe überhaupt.", tip:"Nur wenn sie flexibel genug ist – mit Kissen unter die Hüfte den Winkel anpassen." },
   { name:"Seitlich liegend", emoji:"↕️", hint:"Entspannt, intim, kein Druck.", desc:"Beide liegen auf der Seite, zueinander gewandt. Er dringt von vorne ein. Entspannt, kein Körpergewicht, ideal für lange Sessions.", tip:"Ihr oberes Bein leicht anheben – gibt ihm besseren Zugang und ihr mehr Stimulation." },
   { name:"Revers Cowgirl liegend", emoji:"🔃", hint:"Sie liegt, er sitzt – anders herum.", desc:"Er liegt auf dem Rücken, sie liegt auf ihm mit dem Rücken zu ihm und den Beinen zwischen seinen. Intensiv, ungewöhnlich.", tip:"Langsame Bewegungen – diese Position ist eng und braucht einen Moment zum Gewöhnen." },
+  { name:"Revers Löffelchen", emoji:"🌙", hint:"Kuscheln – aber sie sieht ihn an.", desc:"Beide liegen auf der Seite, zueinander gewandt von vorne. Er dringt von vorne ein. Küssen möglich, tief und intim.", tip:"Sie hebt ihr oberes Bein leicht an – gibt ihm vollen Zugang und ihr zusätzliche Stimulation." },
+  { name:"Tiefes Sitzen", emoji:"🪑", hint:"Maximum Tiefe, sie bestimmt alles.", desc:"Er sitzt auf dem Bettrand, Füße auf dem Boden. Sie sitzt auf ihm mit Füßen ebenfalls auf dem Boden. Tiefste Penetration möglich.", tip:"Sie lehnt sich leicht zurück und stützt sich auf seinen Oberschenkeln ab – perfekter G-Punkt-Kontakt." },
+  { name:"Kniend von hinten", emoji:"🛋️", hint:"Abwechslung ohne Positionswechsel.", desc:"Sie kniet auf dem Sofa oder Bett, er kniet/steht dahinter. Ergonomisch, tief, er hat Hände für alles frei.", tip:"Ein Kissen unter die Knie – maximaler Komfort, volle Tiefe und volle Kontrolle für ihn." },
+  { name:"Seitlicher Schmetterling", emoji:"🌸", hint:"Entspannt mit ungewöhnlicher Tiefe.", desc:"Sie liegt auf dem Rücken, dreht die Hüfte leicht seitlich. Er kniet neben ihr. Ganz andere Stimulationspunkte als normal.", tip:"Asymmetrische Position – ein Bein angehoben, eines flach – unerwartet intensiv." },
+  { name:"Stehend Gehoben", emoji:"🚪", hint:"Volle Kraft und Spontaneität.", desc:"Er hebt sie hoch an die Wand oder im Raum. Sie schlingt Beine fest um ihn. Intensiv, dominant, überall möglich.", tip:"Er hält sie an Oberschenkeln oder Po – kurze intensive Einheit, dann in eine andere Position wechseln." },
+  { name:"Schaukel-Position", emoji:"🌊", hint:"Wellenförmig, hypnotisch intensiv.", desc:"Er liegt auf dem Rücken. Sie sitzt auf ihm mit Blick zu ihm, lehnt sich leicht vor. Schaukelt vor und zurück, nicht auf und ab.", tip:"Diese Wellenbewegung reibt direkt am G-Punkt – langsam und gleichmäßig ist effektiver als schnell." },
 ];
 
 // ══════════════════════════════════════════════════════════════════
-//  DATA - PUNISHMENTS
 // ══════════════════════════════════════════════════════════════════
 const punishments = [
   { icon:"👅", text:"Verwöhne deinen Partner 3 Minuten lang oral – kein Abbrechen!" },
@@ -1125,7 +1190,6 @@ const punishments = [
   { for:'both', icon:"🔥", text:"Dein Partner sitzt – du setzt dich auf ihn und bestimmst alles für die nächsten 5 Minuten." },
   { icon:"🏹", text:"Dein Partner gibt dir 3 explizite Anweisungen – du führst alle drei hintereinander aus ohne zu zögern." },
   { icon:"💦", text:"Du verwöhnst deinen Partner oral während er sich nicht bewegen darf. Dauer: bis er dich aufhören lässt." },
-  { icon:"🎭", text:"Leg deinen Partner auf den Bauch – massiere seinen Po und seine Schenkel. Dann lecke beides ab." },
   { icon:"🔥", text:"Dein Partner sitzt auf dem Sofa – du kniast davor und verwöhnst ihn oral. Er darf zuschauen." },
   { icon:"🍒", text:"Reite deinen Partner 3 Minuten – er darf dich dabei anfassen aber nicht die Richtung bestimmen." },
   { icon:"🌹", text:"Dein Partner führt deine Hand dorthin wo er sie haben will – du tust genau was er zeigt, 3 Minuten." },
@@ -1206,6 +1270,41 @@ const truths = [
   { for:'frau', text:"Was wünschst du dir öfter von {MANN} und traust dich nicht zu sagen?" },
   { for:'frau', text:"Was macht {MANN} mit seinen Fingern oder seiner Zunge das du nie vergisst?" },
   { for:'frau', text:"Wenn {MANN} eine Sache öfter tun würde – was wäre das?" },
+  // ── NEUE WAHRHEITEN SANFT (lvl:1) ──
+  { lvl:1, for:'both', text:"Was liebst du an mir am meisten – nenne drei Dinge die du mir noch nie so direkt gesagt hast." },
+  { lvl:1, for:'both', text:"Wann hast du das letzte Mal an mich gedacht ohne dass ich dabei war?" },
+  { lvl:1, for:'both', text:"Welchen Moment mit mir würdest du am liebsten nochmal genau so erleben?" },
+  { lvl:1, for:'both', text:"Was macht dich glücklich wenn du einfach nur an mich denkst?" },
+  { lvl:1, for:'both', text:"Was wäre das Schönste das du vermissen würdest wenn wir uns nicht hätten?" },
+  { lvl:1, for:'both', text:"Was ist dein liebstes Ritual das wir miteinander haben?" },
+  { lvl:1, for:'both', text:"An welchem Moment in unserem Leben erinnerst du dich am häufigsten – und warum?" },
+  // ── NEUE WAHRHEITEN STANDARD ──
+  { for:'both', text:"Was ist der intensivste Moment mit mir bei dem du das meiste Verlangen gespürt hast?" },
+  { for:'both', text:"Gibt es etwas das du mir noch nie gezeigt oder gesagt hast weil du dich nicht traust?" },
+  { for:'both', text:"Was findest du an mir am sinnlichsten – etwas das ich selbst wahrscheinlich nicht bemerke?" },
+  { for:'both', text:"Was würdest du mir flüstern wenn wir gerade nicht allein wären aber es unbedingt tun wolltest?" },
+  { for:'both', text:"Was ist deine liebste Erinnerung an eine Nacht mit mir – was hat sie besonders gemacht?" },
+  { for:'both', text:"Welche Eigenschaft von mir macht dich am meisten an – eine die ich selbst nicht so wahrnehme?" },
+  { for:'both', text:"Was wäre dein perfekter Abend mit mir – von Anfang bis Ende beschreib ihn genau?" },
+  { for:'both', text:"An welcher Körperstelle von mir schaust du heimlich am meisten hin wenn ich nicht hinschaue?" },
+  { for:'both', text:"Welche Berührung von mir magst du am liebsten – die häufigste oder eine ganz bestimmte?" },
+  { for:'both', text:"Was denkst du wenn du siehst dass ich allein für dich erregt bin?" },
+  { for:'mann', text:"Was dachtest du beim allerersten Mal als du mich nackt gesehen hast – ehrlich und laut?" },
+  { for:'mann', text:"Welche Stellung oder Position von mir findest du am heißesten und warum genau?" },
+  { for:'mann', text:"Was würdest du tun wenn ich mitten in der Nacht aufwache und Sex will?" },
+  { for:'frau', text:"Was geht dir durch den Kopf wenn du merkst dass ich schon auf dich warte?" },
+  { for:'frau', text:"Was ist das Mutigste das du dir von mir im Bett wünschst aber noch nie ausgesprochen hast?" },
+  { for:'frau', text:"Beschreibe in einem Satz was dich bei mir sofort heiß macht – ohne nachzudenken." },
+  { for:'both', text:"Was wünschst du dir von mir im Bett das du noch nie laut ausgesprochen hast?" },
+  { for:'both', text:"Hast du schon mal an mich gedacht wenn du allein warst – was genau hast du dir vorgestellt?" },
+  // ── NEUE WAHRHEITEN WILD (lvl:3) ──
+  { lvl:3, for:'both', text:"Was ist das Wildeste das du dir für uns beide vorstellst – sag es laut und in allen Details." },
+  { lvl:3, for:'mann', text:"Was würdest du als allererstes tun wenn ich sage: heute darfst du alles mit mir machen?" },
+  { lvl:3, for:'frau', text:"Beschreibe in vollen Details was du gerne mit deinem Mund an mir machen würdest." },
+  { lvl:3, for:'both', text:"Was ist die expliziteste Fantasie die du über uns beide hast – fang jetzt an zu erzählen." },
+  { lvl:3, for:'mann', text:"Was würdest du tun wenn ich jetzt ohne Worte beginnen würde dich zu verwöhnen?" },
+  { lvl:3, for:'frau', text:"Beschreibe Schritt für Schritt was du an mir berühren, küssen und verwöhnen möchtest." },
+  { lvl:3, for:'both', text:"Nenne die drei explizitesten Dinge die du von mir willst – sag sie nacheinander und laut." },
 ];
 
 // ══════════════════════════════════════════════════════════════════
@@ -1399,6 +1498,43 @@ const dares = [
   { for:'both', text:"Bindet euch gegenseitig die Hände locker hinter den Rücken – dann versucht euch trotzdem zu verwöhnen." },
   { for:'both', text:"Dirty Talk-Runde: Beschreibt euch gegenseitig laut und explizit was ihr gerade tut – kein Schweigen." },
   { for:'both', text:"Macht den 69er komplett – beide gleichzeitig, 4 Minuten, kein Aufhören." },
+
+  // ── NEUE PFLICHTEN SANFT (lvl:1) ──
+  { lvl:1, for:'both', text:"Küsst euch sehr langsam – 60 Sekunden, nur Lippen, keine Hände. Danach sagt ihr euch was ihr fühlt." },
+  { lvl:1, for:'both', text:"Haltet euch eng umschlossen – kein Wort, nur Wärme und Herzschlag. 2 Minuten." },
+  { lvl:1, for:'both', text:"Massiert euch gegenseitig Hände und Unterarme – sanft und bewusst. Je 90 Sekunden." },
+  { lvl:1, for:'both', text:"Schreibt mit dem Finger auf den Rücken des anderen einen Satz – er muss ihn erraten." },
+  { lvl:1, for:'both', text:"Flüstert euch abwechselnd 3 Dinge ins Ohr die ihr am anderen liebt – echte, konkrete Sachen." },
+  { lvl:1, for:'both', text:"Küsst euch die Stirn, die Wangen, die Augen – überall außer die Lippen. 45 Sekunden." },
+  { lvl:1, for:'both', text:"Schaut euch 90 Sekunden in die Augen ohne zu sprechen oder zu lachen." },
+  { lvl:1, for:'mann', text:"{MANN} massiert {FRAU} die Schultern und den Nacken – 3 Minuten, kein Stress, nur Wärme." },
+  { lvl:1, for:'frau', text:"{FRAU} kämmt {MANN} mit den Fingern durch die Haare und massiert sanft die Kopfhaut." },
+
+  // ── NEUE PFLICHTEN STANDARD ──
+  { for:'both', text:"Einer liegt auf dem Bauch – der andere küsst den kompletten Rücken von oben bis unten. Dann tauschen." },
+  { for:'both', text:"Tanzt 2 Minuten eng miteinander – kein Abstand, kein Lachen, jede Bewegung bewusst." },
+  { for:'both', text:"Zeigt euch gegenseitig wie ihr am liebsten geküsst werden wollt – führt die Hand des anderen." },
+  { for:'both', text:"Redet 2 Minuten nur darüber was ihr gerade fühlt wenn ihr euch berührt – kein Ausweichen." },
+  { for:'both', text:"Einer gibt 5 Anweisungen hintereinander – der andere führt jede aus ohne zu fragen." },
+  { for:'both', text:"Verwöhnt euch gleichzeitig mit Händen – keiner hört auf bis der andere lacht oder stöhnt." },
+  { for:'both', text:"Küsst euch von oben nach unten komplett durch – kein Körperteil darf ausgelassen werden." },
+  { for:'mann', text:"Küsse {FRAU} am Hals 60 Sekunden lang – kein Millimeter pausieren, deine Hände dürfen wandern." },
+  { for:'mann', text:"{MANN} hebt {FRAU} hoch und trägt sie ins Bett – dann kommt er über sie und küsst sie 30 Sekunden." },
+  { for:'mann', text:"Ziehe {FRAU} von hinten an dich heran – halte sie fest und küsse ihren Nacken. 90 Sekunden." },
+  { for:'frau', text:"{FRAU} setzt sich auf {MANN}s Schoß und küsst ihn 45 Sekunden – keine Hände erlaubt." },
+  { for:'frau', text:"Flüstere {MANN} ins Ohr was du gerade mit ihm machen willst – so explizit wie möglich, 30 Sekunden." },
+  { for:'frau', text:"{FRAU} zieht {MANN} langsam aus – ein Kleidungsstück nach dem anderen, kein Wort." },
+
+  // ── NEUE PFLICHTEN WILD (lvl:3) ──
+  { lvl:3, for:'both', text:"Wechselt innerhalb von 5 Minuten durch mindestens 4 verschiedene Positionen – kein Warten dazwischen." },
+  { lvl:3, for:'both', text:"Verwöhnt euch 3 Minuten ohne Hände – nur Lippen, Zunge, Körperkontakt. Komplett." },
+  { lvl:3, for:'both', text:"Einer befiehlt – der andere führt aus. 7 Befehle hintereinander, kein Widerspruch erlaubt." },
+  { lvl:3, for:'mann', text:"{MANN} verwöhnt {FRAU} mit Mund und Fingern gleichzeitig – 4 Minuten, kein Aufhören, kein Wechseln." },
+  { lvl:3, for:'frau', text:"{FRAU} nimmt {MANN} in den Mund und benutzt gleichzeitig eine Hand – 3 Minuten wechselndes Tempo." },
+  { lvl:3, for:'both', text:"Spielt alles durch ohne jede Zurückhaltung – 5 Minuten voller Einsatz, kein Stopp." },
+  { lvl:3, for:'both', text:"Edging-Runde: Bringt euch abwechselnd kurz vor den Höhepunkt – 4× jeder, erst dann darf einer." },
+  { lvl:3, for:'mann', text:"Nimm {FRAU} von hinten stehend – eine Hand an ihrer Hüfte, die andere verwöhnt sie gleichzeitig." },
+  { lvl:3, for:'frau', text:"{FRAU} reitet {MANN} rückwärts – er hält sie fest, sie bestimmt das Tempo, 3 Minuten." },
 ];
 
 
@@ -1461,6 +1597,25 @@ const challenges = [
   { icon:"💋", for:'mann', name:"Auszieh-Challenge", text:"{MANN} zieht {FRAU} komplett aus – mit dem Mund. Kein Einsatz von Händen erlaubt.", time:0 },
   { icon:"🔥", for:'both', name:"Ununterbrochen", text:"Habt Sex ohne eine einzige Pause – kein Stopp, kein Unterbrechen. 7 Minuten am Stück.", time:420 },
   { icon:"🎯", for:'both', name:"Schreiber", text:"Schreibt euch abwechselnd mit dem Finger explizite Sätze auf den Körper – der andere muss erraten was dort steht.", time:0 },
+
+  // ── NEUE CHALLENGES SANFT (lvl:1) ──
+  { lvl:1, icon:"🌹", for:'both', name:"Zarte Erkundung", text:"Erkundet euch nur mit Fingerspitzen – kein Druck, kein Genitalkontakt. 3 Minuten pure Zärtlichkeit.", time:180 },
+  { lvl:1, icon:"💫", for:'both', name:"Atemübung", text:"Legt euch eng zusammen – atmet 3 Minuten synchron. Fühlt den Herzschlag des anderen.", time:180 },
+  { lvl:1, icon:"💋", for:'both', name:"Küss-Tour", text:"Küsst euch an 10 verschiedenen Körperstellen – Lippen zuletzt. Kein Hetzen.", time:120 },
+  { lvl:1, icon:"🤲", for:'mann', name:"Nacken-Massage", text:"{MANN} massiert {FRAU} Nacken und Schultern 3 Minuten – kein Ziel, nur Wärme und Entspannung.", time:180 },
+  { lvl:1, icon:"🌸", for:'frau', name:"Haar-Massage", text:"{FRAU} massiert {MANN} die Kopfhaut mit allen Fingern – 2 Minuten, er entspannt sich komplett.", time:120 },
+  { lvl:1, icon:"🫂", for:'both', name:"Still halten", text:"Umarmt euch fest – beide stehen, kein Wort, einfach da sein. 2 volle Minuten.", time:120 },
+  { lvl:1, icon:"👀", for:'both', name:"Augenkontakt-Spiel", text:"Schaut euch in die Augen – kein Lachen, kein Sprechen. Wer wegschaut muss einen Wunsch des anderen erfüllen.", time:120 },
+
+  // ── NEUE CHALLENGES STANDARD ──
+  { icon:"🎭", for:'both', name:"Rollenspiel: Massage", text:"Einer spielt Masseur:in – volle Ganzkörpermassage, Grenzen schwinden langsam. 6 Minuten.", time:360 },
+  { icon:"🌊", for:'both', name:"Tanz der Versuchung", text:"Tanzt eng – maximaler Körperkontakt, wechselndes Tempo, kein Abstand. 3 Minuten.", time:180 },
+  { icon:"🔥", for:'both', name:"Nur Flüstern", text:"Beschreibt euch gegenseitig flüsternd was ihr gerade wollt – kein normales Reden. 2 Minuten.", time:120 },
+  { icon:"💥", for:'both', name:"Kein Stöhnen!", text:"Verwöhnt euch gegenseitig – aber kein Stöhnen, kein Seufzen erlaubt. 3 Minuten Selbstkontrolle.", time:180 },
+  { icon:"🎯", for:'both', name:"Lieblingsposition wählen", text:"Jeder nennt seine Lieblingsposition – ihr macht beide hintereinander. Jede 3 Minuten.", time:360 },
+  { icon:"💌", for:'both', name:"Ohr-Verwöhnen", text:"Flüstert euch abwechselnd je 5 explizite Wünsche ins Ohr – kein Ausweichen, kein Scherzen.", time:0 },
+  { icon:"🌹", for:'frau', name:"Hals-Küsse für ihn", text:"{FRAU} küsst {MANN} Hals und Schlüsselbein 90 Sekunden lang – kein Millimeter pausieren.", time:90 },
+  { icon:"🔥", for:'mann', name:"Hals & Ohr für sie", text:"{MANN} küsst und haucht {FRAU} an Hals und Ohr – 90 Sekunden wechseln zwischen Lippen und Atem.", time:90 },
 ];
 
 // ══════════════════════════════════════════════════════════════════
@@ -1634,31 +1789,77 @@ const stripQuestions = [
 ];
 
 // ══════════════════════════════════════════════════════════════════
+//  INTENSITY & GAME STATE
+// ══════════════════════════════════════════════════════════════════
+let gameIntensity = 2; // 1=sanft, 2=heiß, 3=wild
+let globalRound = 0;
+let todSkipsLeft = 3;
+
+function setIntensity(lvl) {
+  gameIntensity = lvl;
+  [1,2,3].forEach(i => {
+    const btn = document.getElementById('ibtn-' + i);
+    btn.className = 'intensity-btn' + (i === lvl ? ' active-' + i : '');
+  });
+  // Rebuild all pools after intensity change
+  rebuildTodPools();
+  rebuildChallengePools();
+}
+
+function matchesIntensity(item) {
+  const lvl = item.lvl;
+  if (!lvl) return true; // no lvl tag = always included
+  if (gameIntensity === 1) return lvl === 1;
+  if (gameIntensity === 2) return lvl <= 2;
+  return true; // wild = alle
+}
+
+function updateHomeStats() {
+  if (globalRound === 0) {
+    document.getElementById('round-row').style.display = 'none';
+    return;
+  }
+  document.getElementById('round-row').style.display = 'flex';
+  document.getElementById('round-chip').textContent = 'Runde ' + globalRound;
+  const turnName = todTurn === 'p1' ? players.p1.name : players.p2.name;
+  document.getElementById('turn-chip').textContent = turnName + ' wäre als Nächstes dran';
+}
+
+// ══════════════════════════════════════════════════════════════════
 //  SMART POOLS
 // ══════════════════════════════════════════════════════════════════
 const positionPool = new SmartPool(positions);
 const punishPool = new SmartPool(punishments);
 const hkPool = new SmartPool(hkZones);
 const stripPool = new SmartPool(stripQuestions);
-const challengePoolMann = new SmartPool(challenges.filter(c => c.for === 'mann' || c.for === 'both'));
-const challengePoolFrau = new SmartPool(challenges.filter(c => c.for === 'frau' || c.for === 'both'));
+
+let challengePoolMann, challengePoolFrau;
+function rebuildChallengePools() {
+  challengePoolMann = new SmartPool(challenges.filter(c =>
+    (c.for === 'mann' || c.for === 'both') && matchesIntensity(c)
+  ));
+  challengePoolFrau = new SmartPool(challenges.filter(c =>
+    (c.for === 'frau' || c.for === 'both') && matchesIntensity(c)
+  ));
+}
+rebuildChallengePools();
+
 let challengeTurn = 'mann'; // whose turn it is
 
-let truthPool, darePool;
+let truthPoolMann, truthPoolFrau, darePoolMann, darePoolFrau;
 function rebuildTodPools() {
-  // Build gender-filtered versions
-  const filteredTruths = truths.filter(t =>
-    t.for === 'both' ||
-    (t.for === 'mann') ||
-    (t.for === 'frau')
-  );
-  const filteredDares = dares.filter(d =>
-    d.for === 'both' ||
-    (d.for === 'mann') ||
-    (d.for === 'frau')
-  );
-  truthPool = new SmartPool(filteredTruths);
-  darePool = new SmartPool(filteredDares);
+  truthPoolMann = new SmartPool(truths.filter(t =>
+    (t.for === 'both' || t.for === 'mann') && matchesIntensity(t)
+  ));
+  truthPoolFrau = new SmartPool(truths.filter(t =>
+    (t.for === 'both' || t.for === 'frau') && matchesIntensity(t)
+  ));
+  darePoolMann  = new SmartPool(dares.filter(d =>
+    (d.for === 'both' || d.for === 'mann') && matchesIntensity(d)
+  ));
+  darePoolFrau  = new SmartPool(dares.filter(d =>
+    (d.for === 'both' || d.for === 'frau') && matchesIntensity(d)
+  ));
 }
 rebuildTodPools();
 
@@ -1686,9 +1887,23 @@ function showScreen(id) {
   document.getElementById(id).classList.add('active');
   document.getElementById(id).scrollTop = 0;
 }
-function goHome() { stopTimer(); showScreen('home'); }
-function openChallenges() { challengeTurn = 'mann'; showScreen('challenges'); updateChallengeTurnBadge(); }
-function openTruthDare() { rebuildTodPools(); showScreen('truthdare'); }
+function goHome() { stopTimer(); updateHomeStats(); showScreen('home'); }
+function openChallenges() { challengeTurn = players.p1.gender === 'm' ? 'mann' : 'frau'; rebuildChallengePools(); showScreen('challenges'); updateChallengeTurnBadge(); }
+function openTruthDare() { rebuildTodPools(); todTurn = 'p1'; todSkipsLeft = 3; showScreen('truthdare'); }
+
+function openSpontanModus() {
+  const r = Math.random();
+  if (r < 0.33) {
+    showScreen('roulette');
+    setTimeout(() => spinRoulette(), 400);
+  } else if (r < 0.66) {
+    openChallenges();
+    setTimeout(() => newChallenge(), 300);
+  } else {
+    openTruthDare();
+    setTimeout(() => setTodMode('mix'), 200);
+  }
+}
 
 // ══════════════════════════════════════════════════════════════════
 //  ROULETTE
@@ -1747,6 +1962,7 @@ function declinePosition() {
 // ══════════════════════════════════════════════════════════════════
 let todMode = 'wahrheit';
 let todCount = { wahrheit: 0, pflicht: 0 };
+let todTurn = 'p1'; // whose turn in Truth or Dare
 
 function setTodMode(mode) {
   todMode = mode;
@@ -1763,28 +1979,62 @@ function nextTod() {
   const icon = document.getElementById('tod-icon');
   const text = document.getElementById('tod-text');
   const badge = document.getElementById('tod-for-badge');
+  const turnBadge = document.getElementById('tod-turn-badge');
   const counter = document.getElementById('tod-counter');
 
+  // Determine current player and their gender
+  const currentPlayer = players[todTurn];
+  const isMann = currentPlayer.gender === 'm';
+
+  // Show whose turn it is
+  turnBadge.style.display = 'inline-block';
+  turnBadge.className = 'tod-for-badge ' + (isMann ? 'male' : 'female');
+  turnBadge.textContent = '🎯 ' + currentPlayer.name + ' ist dran';
+
+  // Pick gender-matched question from the right pool
   let item;
   if (mode === 'wahrheit') {
-    item = truthPool.next();
+    item = isMann ? truthPoolMann.next() : truthPoolFrau.next();
     icon.textContent = '🤫';
     todCount.wahrheit++;
     counter.textContent = `Wahrheit #${todCount.wahrheit}`;
   } else {
-    item = darePool.next();
+    item = isMann ? darePoolMann.next() : darePoolFrau.next();
     icon.textContent = '🔥';
     todCount.pflicht++;
     counter.textContent = `Pflicht #${todCount.pflicht}`;
   }
 
+  // Show for-badge (both / this player's name)
   badge.style.display = 'inline-block';
   badge.className = 'tod-for-badge ' + forClass(item.for);
   badge.textContent = forLabel(item.for);
+
   text.textContent = tpl(item.text);
   text.style.animation = 'none';
   setTimeout(() => { text.style.animation = 'fadeUp .3s ease'; }, 10);
+
+  // Alternate turns
+  todTurn = todTurn === 'p1' ? 'p2' : 'p1';
+  globalRound++;
+
+  // Reset skip counter per round pair
+  const skipEl = document.getElementById('skip-counter');
+  skipEl.textContent = todSkipsLeft > 0 ? `Noch ${todSkipsLeft}× passen möglich` : '';
 }
+
+function skipTod() {
+  if (todSkipsLeft <= 0) {
+    document.getElementById('skip-counter').textContent = '⛔ Passen aufgebraucht!';
+    return;
+  }
+  todSkipsLeft--;
+  // show same person a new card (don't advance turn)
+  todTurn = todTurn === 'p1' ? 'p2' : 'p1'; // undo upcoming flip
+  nextTod();
+  // nextTod already flipped turn, so it is now correct again
+}
+
 
 // ══════════════════════════════════════════════════════════════════
 //  CHALLENGES
