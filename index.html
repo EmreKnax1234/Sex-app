@@ -654,6 +654,434 @@ html, body {
 
 /* ─── ANIMATIONS ─── */
 .spinning { animation:spin .08s linear infinite; }
+
+/* ══════════════════════════════════════════════════════════
+   NEUE FEATURES
+══════════════════════════════════════════════════════════ */
+
+/* ─── HITZE-METER ─── */
+@keyframes heatGlow {
+  0%,100% { box-shadow:0 0 8px rgba(255,80,80,.4); }
+  50%      { box-shadow:0 0 22px rgba(255,80,80,.9); }
+}
+@keyframes heatPulse { 0%,100%{opacity:.85}50%{opacity:1} }
+.heat-container {
+  padding:.4rem 1.5rem .6rem;
+  display:flex; flex-direction:column; gap:.3rem;
+}
+.heat-bar-wrap {
+  height:8px; background:rgba(255,255,255,.08);
+  border-radius:50px; overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+}
+.heat-fill {
+  height:100%; border-radius:50px;
+  background:linear-gradient(90deg, #6488ea, #a064ea, #c9204a, #d4a84b, #ff4444);
+  background-size:500% 100%;
+  transition:width .8s cubic-bezier(.4,0,.2,1), background-position .8s ease;
+  background-position:0% center;
+  width:0%;
+}
+.heat-fill.hot { animation:heatGlow 1.5s infinite; }
+.heat-row {
+  display:flex; justify-content:space-between; align-items:center;
+}
+.heat-label { font-size:.78rem; color:var(--muted); letter-spacing:.08em; }
+.heat-pct { font-size:.78rem; color:var(--muted); font-family:'Playfair Display',serif; }
+
+/* ─── KI GENERATOR ─── */
+@keyframes typeOut {
+  from { opacity:0; transform:translateY(4px); }
+  to   { opacity:1; transform:none; }
+}
+@keyframes spinLoader {
+  to { transform:rotate(360deg); }
+}
+#ki-gen { background:radial-gradient(ellipse at 50% 0%, #0d1a3a 0%, var(--bg) 65%); }
+.ki-body { padding:0 1.5rem 2rem; display:flex; flex-direction:column; gap:1rem; }
+.ki-mood-row { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+.ki-mood-btn {
+  padding:.85rem .5rem; border-radius:14px; border:1px solid rgba(255,255,255,.1);
+  background:var(--card); color:var(--muted); cursor:pointer;
+  font-family:'Playfair Display',serif; font-size:.9rem; text-align:center;
+  transition:all .2s;
+}
+.ki-mood-btn:active { transform:scale(.96); }
+.ki-mood-btn.active { border-color:var(--blue); color:var(--blue); background:rgba(100,136,234,.15); }
+.ki-mood-btn[data-m="2"].active { border-color:var(--accent2); color:var(--accent2); background:rgba(201,32,74,.12); }
+.ki-mood-btn[data-m="3"].active { border-color:var(--gold); color:var(--gold); background:rgba(212,168,75,.12); }
+.ki-mood-btn[data-m="4"].active { border-color:#ff4444; color:#ff8888; background:rgba(255,68,68,.1); }
+.ki-mood-icon { font-size:1.6rem; display:block; margin-bottom:.3rem; }
+.ki-mood-label { font-size:.82rem; }
+.ki-hint { text-align:center; color:var(--muted); font-size:.85rem; font-style:italic; }
+.ki-keywords {
+  width:100%; background:var(--card); border:1px solid rgba(100,136,234,.25);
+  border-radius:16px; padding:.9rem 1.1rem; color:var(--text);
+  font-family:'Cormorant Garamond',serif; font-size:1rem; outline:none;
+  resize:none; min-height:72px;
+}
+.ki-keywords::placeholder { color:var(--muted); }
+.ki-result-card {
+  background:var(--card); border-radius:22px; padding:1.6rem 1.4rem;
+  border:1px solid rgba(100,136,234,.2); min-height:120px;
+  display:flex; flex-direction:column; justify-content:center;
+  text-align:center; position:relative; overflow:hidden;
+}
+.ki-result-card::before {
+  content:''; position:absolute; top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg, var(--blue), var(--purple), var(--accent));
+}
+.ki-result-text {
+  font-size:1.05rem; color:var(--cream); line-height:1.8; font-style:italic;
+  animation:typeOut .4s ease;
+}
+.ki-result-placeholder { color:var(--muted); font-size:.95rem; }
+.ki-spinner {
+  width:36px; height:36px; border:3px solid rgba(100,136,234,.2);
+  border-top-color:var(--blue); border-radius:50%;
+  animation:spinLoader .8s linear infinite; margin:0 auto;
+}
+.ki-api-toggle {
+  text-align:center; color:var(--muted); font-size:.8rem;
+  cursor:pointer; text-decoration:underline; letter-spacing:.05em;
+  padding:.3rem 0;
+}
+.ki-api-section { display:none; }
+.ki-api-section.open { display:flex; flex-direction:column; gap:.5rem; }
+.ki-api-input {
+  width:100%; background:var(--card); border:1px solid rgba(255,255,255,.12);
+  border-radius:12px; padding:.7rem 1rem; color:var(--text);
+  font-family:'Cormorant Garamond',serif; font-size:.95rem; outline:none;
+}
+.ki-api-input::placeholder { color:var(--muted); }
+.ki-api-note { font-size:.72rem; color:var(--muted); font-style:italic; text-align:center; }
+.ki-mode-badge {
+  text-align:center; font-size:.72rem; padding:.25rem .8rem;
+  border-radius:50px; display:inline-block; margin:0 auto;
+  background:rgba(100,136,234,.12); border:1px solid rgba(100,136,234,.3);
+  color:var(--blue); letter-spacing:.1em; text-transform:uppercase;
+}
+.ki-mode-badge.real { background:rgba(45,212,160,.12); border-color:rgba(45,212,160,.3); color:var(--green); }
+.btn-ki-gen {
+  width:100%; padding:1.1rem; border:none; border-radius:50px;
+  background:linear-gradient(135deg, #2a3a8a, #1a1a5a);
+  color:#fff; font-family:'Playfair Display',serif; font-size:1.05rem;
+  letter-spacing:.1em; cursor:pointer;
+  box-shadow:0 4px 25px rgba(100,136,234,.35);
+  transition:transform .15s, box-shadow .15s;
+}
+.btn-ki-gen:active { transform:scale(.97); }
+.btn-ki-gen:disabled { opacity:.5; cursor:not-allowed; }
+
+/* ─── FANTASIE-KARTEN ─── */
+@keyframes cardAppear {
+  from { opacity:0; transform:scale(.85) rotateY(-20deg); }
+  to   { opacity:1; transform:scale(1) rotateY(0); }
+}
+@keyframes cardShimmer {
+  0%   { background-position:-200% center; }
+  100% { background-position:200% center; }
+}
+#fantasie { background:radial-gradient(ellipse at 50% 0%, #1a0a1a 0%, var(--bg) 60%); }
+.fantasy-body { padding:0 1.5rem 2rem; display:flex; flex-direction:column; gap:1rem; }
+.fantasy-deck-info {
+  text-align:center; color:var(--muted); font-size:.85rem;
+  font-style:italic; letter-spacing:.06em;
+}
+.fantasy-card-area {
+  perspective:800px; cursor:pointer; width:100%;
+}
+.fantasy-card-3d {
+  width:100%; min-height:340px;
+  transform-style:preserve-3d;
+  transition:transform .6s cubic-bezier(.4,0,.2,1);
+  position:relative;
+}
+.fantasy-card-3d.flipped { transform:rotateY(180deg); }
+.fantasy-face {
+  position:absolute; top:0;left:0;right:0;
+  backface-visibility:hidden; border-radius:24px;
+  overflow:hidden;
+}
+.fantasy-face-front {
+  background:linear-gradient(160deg, #2a1228, #1a0820);
+  border:1px solid rgba(212,168,75,.35);
+  min-height:340px; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:.8rem;
+  padding:2rem;
+}
+.fantasy-face-back {
+  background:linear-gradient(160deg, #1a0820, #0d0a1a);
+  border:1px solid rgba(212,168,75,.35);
+  transform:rotateY(180deg);
+  min-height:340px; padding:1.6rem 1.4rem;
+  display:flex; flex-direction:column; gap:.7rem;
+}
+.fantasy-card-emoji { font-size:4rem; }
+.fantasy-card-tap { font-size:.85rem; color:var(--muted); font-style:italic; }
+.fantasy-card-title {
+  font-family:'Playfair Display',serif; font-size:1.7rem;
+  color:var(--gold); text-align:center; animation:cardAppear .5s ease;
+}
+.fantasy-card-setting {
+  font-size:.92rem; color:var(--text2); line-height:1.7;
+  text-align:center; font-style:italic;
+}
+.fantasy-roles-row { display:flex; gap:.7rem; justify-content:center; flex-wrap:wrap; }
+.fantasy-role {
+  padding:.4rem 1rem; border-radius:50px; font-size:.82rem;
+  background:rgba(212,168,75,.1); border:1px solid rgba(212,168,75,.3);
+  color:var(--gold); font-family:'Playfair Display',serif;
+}
+.fantasy-divider { height:1px; background:rgba(212,168,75,.15); margin:.2rem 0; }
+.fantasy-start-label { font-size:.7rem; text-transform:uppercase; letter-spacing:.2em; color:var(--muted); }
+.fantasy-start-text {
+  font-size:.98rem; color:var(--cream); line-height:1.7;
+  font-style:italic; text-align:center;
+}
+.fantasy-rules-label { font-size:.7rem; text-transform:uppercase; letter-spacing:.2em; color:var(--gold); margin-top:.2rem; }
+.fantasy-rules-list { display:flex; flex-direction:column; gap:.4rem; }
+.fantasy-rule {
+  font-size:.88rem; color:var(--text2); line-height:1.5;
+  padding:.4rem .7rem; background:rgba(255,255,255,.04);
+  border-radius:10px; display:flex; gap:.5rem; align-items:flex-start;
+}
+.fantasy-rule-num { color:var(--gold); font-family:'Playfair Display',serif; flex-shrink:0; }
+.btn-new-fantasy {
+  width:100%; padding:1.1rem; border:none; border-radius:50px;
+  background:linear-gradient(135deg, #6a1a50, #3a0a2a);
+  color:#fff; font-family:'Playfair Display',serif; font-size:1.05rem;
+  letter-spacing:.1em; cursor:pointer;
+  box-shadow:0 4px 25px rgba(160,100,234,.35);
+  transition:transform .15s;
+}
+.btn-new-fantasy:active { transform:scale(.97); }
+.fantasy-intensity-note {
+  text-align:center; font-size:.75rem; color:var(--muted);
+  font-style:italic;
+}
+
+/* ─── STATISTIKEN ─── */
+#stats { background:radial-gradient(ellipse at 50% 0%, #0a1a1a 0%, var(--bg) 65%); }
+.stats-body { padding:0 1.5rem 2.5rem; display:flex; flex-direction:column; gap:1.2rem; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; }
+.stat-box {
+  background:var(--card); border-radius:18px; padding:1.1rem;
+  text-align:center; border:1px solid rgba(255,255,255,.07);
+}
+.stat-val { font-family:'Playfair Display',serif; font-size:2rem; color:var(--gold); }
+.stat-lbl { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.1em; margin-top:.2rem; }
+.stats-heat-section { }
+.stats-heat-bar-wrap {
+  height:12px; background:rgba(255,255,255,.06);
+  border-radius:50px; overflow:hidden; margin:.5rem 0;
+}
+.stats-heat-fill {
+  height:100%; border-radius:50px;
+  background:linear-gradient(90deg, #6488ea, #a064ea, #c9204a, #ff4444);
+  transition:width 1s ease;
+}
+.stats-heat-label { font-size:.85rem; color:var(--muted); }
+.ach-section { }
+.ach-title {
+  font-family:'Playfair Display',serif; font-size:1.1rem; color:var(--gold);
+  margin-bottom:.6rem;
+}
+.ach-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; }
+.ach-item {
+  background:var(--card2); border-radius:14px; padding:.8rem;
+  text-align:center; border:1px solid rgba(255,255,255,.06);
+  opacity:.4; transition:opacity .3s, border-color .3s;
+}
+.ach-item.unlocked { opacity:1; border-color:rgba(212,168,75,.35); }
+.ach-item-icon { font-size:1.8rem; margin-bottom:.3rem; }
+.ach-item-name { font-size:.75rem; color:var(--text2); line-height:1.3; }
+.ach-item.unlocked .ach-item-name { color:var(--gold); }
+.btn-reset-stats {
+  width:100%; padding:.85rem; border:1px solid rgba(255,255,255,.1);
+  border-radius:50px; background:transparent; color:var(--muted);
+  font-family:'Playfair Display',serif; font-size:.85rem; cursor:pointer;
+  transition:background .15s;
+}
+.btn-reset-stats:active { background:rgba(255,255,255,.05); }
+.stats-since { text-align:center; font-size:.78rem; color:var(--muted); font-style:italic; }
+
+/* ─── ACHIEVEMENT TOAST ─── */
+@keyframes toastIn  { from{transform:translateY(100px) scale(.9);opacity:0} to{transform:none;opacity:1} }
+@keyframes toastOut { from{opacity:1;transform:none} to{opacity:0;transform:translateY(20px)} }
+.ach-toast {
+  position:fixed; bottom:1.5rem; left:50%; transform:translateX(-50%);
+  background:linear-gradient(135deg, #2a1a10, #1a0a08);
+  border:1px solid rgba(212,168,75,.5); border-radius:50px;
+  padding:.65rem 1.4rem; display:flex; align-items:center; gap:.6rem;
+  z-index:9999; pointer-events:none; opacity:0;
+  box-shadow:0 8px 40px rgba(0,0,0,.7);
+  white-space:nowrap;
+}
+.ach-toast.show { animation:toastIn .4s ease forwards; }
+.ach-toast.hide { animation:toastOut .4s ease forwards; }
+.ach-toast-icon { font-size:1.2rem; }
+.ach-toast-text { font-family:'Playfair Display',serif; font-size:.85rem; color:var(--gold); }
+
+/* ─── PARTICLE ─── */
+@keyframes particleFly {
+  0%   { opacity:1; transform:translate(0,0) scale(1); }
+  100% { opacity:0; transform:translate(var(--dx),var(--dy)) scale(.5); }
+}
+.particle {
+  position:fixed; pointer-events:none; z-index:9000;
+  animation:particleFly .8s ease-out forwards;
+  font-size:1.4rem;
+}
+
+/* ─── JOURNAL ─── */
+@keyframes journalSlide {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:none; }
+}
+#journal { background:radial-gradient(ellipse at 50% 0%, #120808 0%, var(--bg) 65%); }
+.journal-body { padding:0 1.5rem 2.5rem; display:flex; flex-direction:column; gap:1rem; }
+.journal-add-card {
+  background:var(--card); border-radius:20px; padding:1.2rem;
+  border:1px solid rgba(212,168,75,.2);
+}
+.journal-add-title {
+  font-family:'Playfair Display',serif; font-size:1rem; color:var(--gold);
+  margin-bottom:.7rem;
+}
+.journal-textarea {
+  width:100%; background:transparent; border:none; outline:none;
+  color:var(--text); font-family:'Cormorant Garamond',serif;
+  font-size:1.05rem; resize:none; min-height:90px; line-height:1.7;
+}
+.journal-textarea::placeholder { color:var(--muted); }
+.journal-meta-row { display:flex; gap:.6rem; margin-top:.7rem; flex-wrap:wrap; align-items:center; }
+.journal-mood-select {
+  flex:1; min-width:90px; background:var(--card2);
+  border:1px solid rgba(212,168,75,.2); color:var(--text);
+  padding:.55rem .6rem; border-radius:10px;
+  font-family:'Cormorant Garamond',serif; font-size:.9rem; outline:none;
+}
+.btn-add-journal {
+  padding:.55rem 1.1rem;
+  background:linear-gradient(135deg, #6a3a10, #4a2008);
+  border:none; border-radius:10px; color:var(--gold);
+  font-family:'Playfair Display',serif; font-size:.88rem;
+  cursor:pointer; white-space:nowrap; transition:transform .15s;
+}
+.btn-add-journal:active { transform:scale(.96); }
+.journal-entries { display:flex; flex-direction:column; gap:.8rem; }
+.journal-entry {
+  background:var(--card); border-radius:18px; padding:1.1rem 1.2rem;
+  border-left:3px solid var(--entry-color, var(--gold));
+  animation:journalSlide .3s ease;
+}
+.journal-entry-header {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:.5rem;
+}
+.journal-entry-mood { font-size:1.2rem; }
+.journal-entry-date { font-size:.72rem; color:var(--muted); letter-spacing:.05em; }
+.journal-entry-text { font-size:.97rem; color:var(--text2); line-height:1.7; font-style:italic; }
+.journal-entry-del {
+  background:none; border:none; color:rgba(255,255,255,.2);
+  font-size:1rem; cursor:pointer; padding:.2rem;
+}
+.journal-empty { text-align:center; color:var(--muted); font-style:italic; padding:2rem 0; }
+.journal-count-row {
+  display:flex; justify-content:space-between; align-items:center;
+}
+.journal-section-lbl {
+  font-size:.75rem; text-transform:uppercase; letter-spacing:.2em; color:var(--muted);
+}
+.journal-count { font-size:.75rem; color:var(--muted); }
+
+/* ─── STREAK ─── */
+.streak-card {
+  background:linear-gradient(135deg, #1a1008, #0d0808);
+  border:1px solid rgba(212,168,75,.3); border-radius:18px;
+  padding:1rem 1.2rem; display:flex; align-items:center; gap:1rem;
+}
+.streak-fire { font-size:2.4rem; flex-shrink:0; }
+.streak-info { flex:1; }
+.streak-num {
+  font-family:'Playfair Display',serif; font-size:1.6rem; color:var(--gold);
+  display:inline; line-height:1;
+}
+.streak-lbl { font-size:.75rem; color:var(--muted); margin-top:.1rem; }
+.streak-best { font-size:.78rem; color:var(--muted); margin-top:.15rem; }
+
+/* ─── NOTFALL-PAUSE ─── */
+.pause-btn-floating {
+  position:fixed; bottom:1.5rem; right:1.2rem;
+  width:52px; height:52px; border-radius:50%;
+  background:rgba(20,10,20,.9); border:1.5px solid rgba(255,255,255,.15);
+  color:rgba(255,255,255,.5); font-size:1.3rem; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+  z-index:500; backdrop-filter:blur(10px);
+  transition:transform .15s, background .15s;
+  box-shadow:0 4px 20px rgba(0,0,0,.5);
+}
+.pause-btn-floating.visible { display:flex; }
+.pause-btn-floating:active { transform:scale(.92); }
+
+/* ─── PAUSE OVERLAY ─── */
+#pause-overlay {
+  position:fixed; inset:0; z-index:9998;
+  background:#080409; display:none;
+  flex-direction:column; align-items:center; justify-content:center;
+  gap:1.5rem;
+}
+#pause-overlay.active { display:flex; }
+.pause-inner { text-align:center; }
+.pause-emoji { font-size:5rem; margin-bottom:1rem; display:block; }
+.pause-title {
+  font-family:'Playfair Display',serif; font-size:2rem; color:var(--cream);
+  margin-bottom:.5rem;
+}
+.pause-sub { color:var(--muted); font-size:1rem; margin-bottom:2rem; }
+.btn-resume {
+  background:linear-gradient(135deg, var(--accent), #7a0f29);
+  border:none; color:#fff; padding:1rem 3rem; border-radius:50px;
+  font-family:'Playfair Display',serif; font-size:1.1rem;
+  cursor:pointer; box-shadow:0 4px 25px rgba(201,32,74,.4);
+  letter-spacing:.1em;
+}
+.btn-end-game {
+  background:none; border:1px solid rgba(255,255,255,.15); color:var(--muted);
+  padding:.75rem 2rem; border-radius:50px;
+  font-family:'Playfair Display',serif; font-size:.9rem; cursor:pointer;
+  letter-spacing:.08em;
+}
+
+/* ─── SPIN WHEEL ─── */
+@keyframes wheelSpin {
+  0%   { transform:rotate(0deg); }
+  100% { transform:rotate(var(--spin-deg)); }
+}
+.wheel-container {
+  position:relative; width:100%; display:flex;
+  flex-direction:column; align-items:center; gap:.8rem;
+}
+.wheel-svg-wrap {
+  position:relative; width:280px; height:280px;
+  margin:0 auto; flex-shrink:0;
+}
+.wheel-pointer {
+  position:absolute; top:-14px; left:50%;
+  transform:translateX(-50%);
+  font-size:1.6rem; z-index:5;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.8));
+}
+#wheel-svg {
+  width:280px; height:280px;
+  transform-origin:center;
+  transition:none;
+  filter:drop-shadow(0 0 20px rgba(201,32,74,.3));
+}
+#wheel-svg.spinning {
+  animation:wheelSpin var(--spin-duration,3s) cubic-bezier(.2,0,.1,1) forwards;
+}
 </style>
 </head>
 <body>
@@ -718,6 +1146,13 @@ html, body {
     <button class="intensity-btn" id="ibtn-2" onclick="setIntensity(2)">🔥 Heiß</button>
     <button class="intensity-btn" id="ibtn-3" onclick="setIntensity(3)">🌋 Wild</button>
   </div>
+  <div class="heat-container">
+    <div class="heat-bar-wrap"><div class="heat-fill" id="heat-fill"></div></div>
+    <div class="heat-row">
+      <span class="heat-label" id="heat-label">💙 Kalt — Spiel beginnt gerade</span>
+      <span class="heat-pct" id="heat-pct">0%</span>
+    </div>
+  </div>
   <div class="home-round-row" id="round-row" style="display:none;">
     <span class="round-chip" id="round-chip">Runde 0</span>
     <span class="round-chip" id="turn-chip">— am Zug</span>
@@ -763,6 +1198,26 @@ html, body {
       <div class="mode-name">Spontan-Modus</div>
       <div class="mode-desc">Zufällige Überraschung</div>
     </div>
+    <div class="mode-card" style="--card-accent:#a064ea;" onclick="showScreen('ki-gen')">
+      <span class="mode-icon">🤖</span>
+      <div class="mode-name">KI-Generator</div>
+      <div class="mode-desc">Einzigartige KI-Challenges</div>
+    </div>
+    <div class="mode-card" style="--card-accent:#e8355c;" onclick="openFantasie()">
+      <span class="mode-icon">🃏</span>
+      <div class="mode-name">Fantasie-Karten</div>
+      <div class="mode-desc">Erotische Rollenspiele</div>
+    </div>
+    <div class="mode-card" style="--card-accent:#d4a84b;" onclick="showScreen('journal')">
+      <span class="mode-icon">📓</span>
+      <div class="mode-name">Heiße Momente</div>
+      <div class="mode-desc">Euer privates Tagebuch</div>
+    </div>
+    <div class="mode-card" style="--card-accent:#2dd4a0;" onclick="showScreen('stats')">
+      <span class="mode-icon">📊</span>
+      <div class="mode-name">Statistiken</div>
+      <div class="mode-desc">Euer Spielverlauf</div>
+    </div>
   </div>
   <div class="home-footer">
     <button class="btn-settings" onclick="showScreen('setup')">⚙️ Spieler ändern</button>
@@ -777,7 +1232,19 @@ html, body {
     <div class="top-spacer"></div>
   </div>
   <div class="roulette-body">
-    <div class="spin-area">
+    <div class="wheel-container">
+      <div class="wheel-svg-wrap">
+        <div class="wheel-pointer">▼</div>
+        <svg id="wheel-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="140" cy="140" r="136" fill="#1e1020" stroke="rgba(201,32,74,.4)" stroke-width="1.5"/>
+          <!-- Segmente werden per JS befüllt -->
+          <g id="wheel-segments"></g>
+          <circle cx="140" cy="140" r="22" fill="#1e1020" stroke="rgba(212,168,75,.5)" stroke-width="1.5"/>
+          <text x="140" y="145" text-anchor="middle" font-size="18" fill="rgba(212,168,75,.8)">✦</text>
+        </svg>
+      </div>
+    </div>
+    <div class="spin-area" id="spin-area">
       <div class="position-emoji" id="r-emoji">💫</div>
       <div class="position-name" id="r-name">Drehe das Roulette!</div>
       <div class="position-hint" id="r-hint">Was erwartet euch heute?</div>
@@ -967,6 +1434,188 @@ html, body {
     <div class="hk-feedback-msg" id="hk-feedback"></div>
     <button class="btn-hk" onclick="newHkZone()">🎯 Neue Zone</button>
   </div>
+</div>
+
+<!-- ─────────────────── KI GENERATOR ─────────────────── -->
+<div class="screen" id="ki-gen">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">← Zurück</button>
+    <span class="top-title">🤖 KI-Generator</span>
+    <div class="top-spacer"></div>
+  </div>
+  <div class="ki-body">
+    <p class="ki-hint">Wählt eine Stimmung – die KI generiert eine einzigartige Challenge!</p>
+    <div class="ki-mood-row">
+      <div class="ki-mood-btn active" data-m="1" onclick="selectKIMood(1)">
+        <span class="ki-mood-icon">🌹</span>
+        <div class="ki-mood-label">Romantisch</div>
+      </div>
+      <div class="ki-mood-btn" data-m="2" onclick="selectKIMood(2)">
+        <span class="ki-mood-icon">🔥</span>
+        <div class="ki-mood-label">Heiß</div>
+      </div>
+      <div class="ki-mood-btn" data-m="3" onclick="selectKIMood(3)">
+        <span class="ki-mood-icon">🌋</span>
+        <div class="ki-mood-label">Wild</div>
+      </div>
+      <div class="ki-mood-btn" data-m="4" onclick="selectKIMood(4)">
+        <span class="ki-mood-icon">💥</span>
+        <div class="ki-mood-label">Extrem</div>
+      </div>
+    </div>
+    <textarea class="ki-keywords" id="ki-keywords" placeholder="Stichworte (optional): z.B. Rollenspiel, Massage, Küche …" rows="2"></textarea>
+    <div class="ki-result-card" id="ki-result-card">
+      <div class="ki-result-placeholder" id="ki-placeholder">Drücke „Generieren" und erlebe eine KI-Challenge die nur für euch erstellt wird.</div>
+      <div class="ki-result-text" id="ki-result-text" style="display:none;"></div>
+    </div>
+    <div id="ki-mode-wrap" style="text-align:center;">
+      <span class="ki-mode-badge" id="ki-mode-badge">Lokal-Modus</span>
+    </div>
+    <button class="btn-ki-gen" id="btn-ki-gen" onclick="generateKI()">🤖 Challenge generieren</button>
+    <div class="ki-api-toggle" onclick="toggleAPISection()">🔑 Echten Claude KI-Modus aktivieren</div>
+    <div class="ki-api-section" id="ki-api-section">
+      <input class="ki-api-input" id="ki-api-key" type="password" placeholder="Anthropic API Key (sk-ant-…)">
+      <div class="ki-api-note">Dein Key wird nur lokal im Browser gespeichert und nie übertragen außer an api.anthropic.com</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────────── FANTASIE-KARTEN ─────────────────── -->
+<div class="screen" id="fantasie">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">← Zurück</button>
+    <span class="top-title">🃏 Fantasie-Karten</span>
+    <div class="top-spacer"></div>
+  </div>
+  <div class="fantasy-body">
+    <p class="fantasy-deck-info">Zieht eine Karte – entdeckt ein erotisches Rollenspiel-Szenario!</p>
+    <div class="fantasy-card-area" onclick="flipFantasyCard()">
+      <div class="fantasy-card-3d" id="fantasy-card-3d">
+        <div class="fantasy-face fantasy-face-front">
+          <div class="fantasy-card-emoji" id="fc-emoji-front">🃏</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);">Fantasie-Karte</div>
+          <div class="fantasy-card-tap">Tippe um aufzudecken ✨</div>
+        </div>
+        <div class="fantasy-face fantasy-face-back">
+          <div style="text-align:center;">
+            <span id="fc-emoji" style="font-size:2.5rem;"></span>
+            <div class="fantasy-card-title" id="fc-title"></div>
+          </div>
+          <div class="fantasy-card-setting" id="fc-setting"></div>
+          <div class="fantasy-roles-row" id="fc-roles"></div>
+          <div class="fantasy-divider"></div>
+          <div class="fantasy-start-label">✨ Startszene</div>
+          <div class="fantasy-start-text" id="fc-start"></div>
+          <div class="fantasy-divider"></div>
+          <div class="fantasy-rules-label">📋 Spielregeln</div>
+          <div class="fantasy-rules-list" id="fc-rules"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fantasy-intensity-note" id="fc-intensity-note"></div>
+    <button class="btn-new-fantasy" onclick="newFantasyCard()">🃏 Neue Karte ziehen</button>
+  </div>
+</div>
+
+<!-- ─────────────────── STATISTIKEN ─────────────────── -->
+<div class="screen" id="stats">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">← Zurück</button>
+    <span class="top-title">📊 Statistiken</span>
+    <div class="top-spacer"></div>
+  </div>
+  <div class="stats-body">
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-val" id="stat-rounds">0</div>
+        <div class="stat-lbl">Runden gespielt</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-heat">0%</div>
+        <div class="stat-lbl">Hitze-Level</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-dares">0</div>
+        <div class="stat-lbl">Aufgaben erfüllt</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-wishes">0</div>
+        <div class="stat-lbl">Wünsche</div>
+      </div>
+    </div>
+    <div class="stats-heat-section">
+      <div class="heat-label" id="stats-heat-label">💙 Kalt — Spiel beginnt gerade</div>
+      <div class="stats-heat-bar-wrap"><div class="stats-heat-fill" id="stats-heat-fill"></div></div>
+    </div>
+    <div class="ach-section">
+      <div class="ach-title">🏆 Erfolge</div>
+      <div class="ach-grid" id="ach-grid"></div>
+    </div>
+    <div class="stats-since" id="stats-since"></div>
+    <button class="btn-reset-stats" onclick="resetStats()">🗑 Statistiken zurücksetzen</button>
+  </div>
+</div>
+
+<!-- ─────────────────── JOURNAL ─────────────────── -->
+<div class="screen" id="journal">
+  <div class="top-bar">
+    <button class="btn-back" onclick="goHome()">← Zurück</button>
+    <span class="top-title">📓 Heiße Momente</span>
+    <div class="top-spacer"></div>
+  </div>
+  <div class="journal-body">
+    <div class="streak-card" id="streak-card">
+      <div class="streak-fire">🔥</div>
+      <div class="streak-info">
+        <span class="streak-num" id="streak-num">0</span>
+        <span style="font-family:'Playfair Display',serif;color:var(--muted);font-size:1rem;"> Tage</span>
+        <div class="streak-lbl">am Stück gespielt</div>
+        <div class="streak-best" id="streak-best"></div>
+      </div>
+    </div>
+    <div class="journal-add-card">
+      <div class="journal-add-title">✍️ Moment festhalten</div>
+      <textarea class="journal-textarea" id="journal-input" placeholder="Was war heute besonders heiß? Ein Moment, eine Reaktion, etwas Neues … 💋"></textarea>
+      <div class="journal-meta-row">
+        <select class="journal-mood-select" id="journal-mood">
+          <option value="💕">💕 Zärtlich</option>
+          <option value="🔥">🔥 Heiß</option>
+          <option value="🌋">🌋 Wild</option>
+          <option value="💋">💋 Unvergesslich</option>
+          <option value="😈">😈 Verboten</option>
+          <option value="🌹">🌹 Romantisch</option>
+        </select>
+        <button class="btn-add-journal" onclick="addJournalEntry()">+ Eintragen</button>
+      </div>
+    </div>
+    <div class="journal-count-row">
+      <span class="journal-section-lbl">Tagebuch (<span id="journal-count">0</span>)</span>
+      <button style="background:none;border:none;color:var(--muted);font-size:.8rem;cursor:pointer;letter-spacing:.05em;" onclick="clearJournal()">Alle löschen</button>
+    </div>
+    <div class="journal-entries" id="journal-entries">
+      <div class="journal-empty">Euer Tagebuch ist noch leer. Haltet eure heißesten Momente fest! 📓</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── NOTFALL-PAUSE ─── -->
+<button class="pause-btn-floating" id="pause-float-btn" onclick="openPause()" title="Pause">⏸</button>
+
+<div id="pause-overlay">
+  <div class="pause-inner">
+    <span class="pause-emoji">⏸</span>
+    <h2 class="pause-title">Pause</h2>
+    <p class="pause-sub">Nehmt euch Zeit. Alles ist gespeichert.</p>
+    <button class="btn-resume" onclick="closePause()">▶ Weiter spielen</button>
+    <br><br>
+    <button class="btn-end-game" onclick="endGame()">🏠 Spiel beenden</button>
+  </div>
+</div>
+
+<!-- ─── ACHIEVEMENT TOAST ─── -->
+<div class="ach-toast" id="ach-toast">
+  <span class="ach-toast-icon" id="ach-toast-icon">🏆</span>
+  <span class="ach-toast-text" id="ach-toast-text">Erfolg freigeschaltet!</span>
 </div>
 
 <!-- ─────────────────── OVERLAYS ─────────────────── -->
@@ -1886,8 +2535,10 @@ function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.getElementById(id).scrollTop = 0;
+  if (id === 'stats') { updateStats(); }
+  if (id === 'home') { updateHeatMeter(); }
 }
-function goHome() { stopTimer(); updateHomeStats(); showScreen('home'); }
+function goHome() { stopTimer(); updateHomeStats(); updateHeatMeter(); showScreen('home'); }
 function openChallenges() { challengeTurn = players.p1.gender === 'm' ? 'mann' : 'frau'; rebuildChallengePools(); showScreen('challenges'); updateChallengeTurnBadge(); }
 function openTruthDare() { rebuildTodPools(); todTurn = 'p1'; todSkipsLeft = 3; showScreen('truthdare'); }
 
@@ -2277,6 +2928,887 @@ function closeOverlay(id) {
 // ══════════════════════════════════════════════════════════════════
 updateUI();
 renderWishes();
+updateHeatMeter();
+
+// ══════════════════════════════════════════════════════════════════
+//  SOUND ENGINE (Web Audio API – no CDN needed)
+// ══════════════════════════════════════════════════════════════════
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playTone(freq, duration = 0.12, type = 'sine', gain = 0.18) {
+  try {
+    const ctx = getAudioCtx();
+    const osc = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+    osc.connect(gainNode); gainNode.connect(ctx.destination);
+    osc.frequency.value = freq; osc.type = type;
+    gainNode.gain.setValueAtTime(gain, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+    osc.start(); osc.stop(ctx.currentTime + duration);
+  } catch(e) {}
+}
+
+function playChime() { [523,659,784].forEach((f,i) => setTimeout(() => playTone(f,.15,'sine',.15), i*80)); }
+function playWhoosh() {
+  try {
+    const ctx = getAudioCtx();
+    const buf = ctx.createBuffer(1, ctx.sampleRate * .3, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) data[i] = (Math.random()*2-1) * (1 - i/data.length);
+    const src = ctx.createBufferSource();
+    const gainN = ctx.createGain(); const filter = ctx.createBiquadFilter();
+    src.buffer = buf; filter.type = 'bandpass'; filter.frequency.value = 800;
+    gainN.gain.setValueAtTime(.12, ctx.currentTime);
+    gainN.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + .3);
+    src.connect(filter); filter.connect(gainN); gainN.connect(ctx.destination);
+    src.start();
+  } catch(e) {}
+}
+function playSuccess() { [440,550,660,880].forEach((f,i) => setTimeout(() => playTone(f,.2,'sine',.12), i*60)); }
+function playError()   { [300,250].forEach((f,i) => setTimeout(() => playTone(f,.15,'sawtooth',.1), i*120)); }
+function playTick()    { playTone(1000, .04, 'square', .08); }
+function playDice()    { for(let i=0;i<6;i++) setTimeout(()=>playTone(300+Math.random()*400,.05,'square',.07), i*50); }
+function playUnlock()  { [523,659,784,1047].forEach((f,i) => setTimeout(()=>playTone(f,.2,'sine',.14), i*90)); }
+function playCountdown() { playTone(660,.1,'sine',.15); }
+function playDone()    { [523,659,784,1047,784,1047].forEach((f,i) => setTimeout(()=>playTone(f,.18,'sine',.13), i*80)); }
+
+// ══════════════════════════════════════════════════════════════════
+//  SPIN WHEEL (animiertes SVG-Rad)
+// ══════════════════════════════════════════════════════════════════
+const wheelColors = [
+  '#c9204a','#a064ea','#d4a84b','#2dd4a0','#6488ea',
+  '#e8355c','#8b3ab8','#c8922a','#1aaa80','#4a6ed4',
+];
+const wheelEmojis = positions.slice(0,10).map(p => p.emoji);
+
+function initWheel() {
+  const svg = document.getElementById('wheel-segments');
+  if (!svg) return;
+  const N = 10, cx = 140, cy = 140, r = 132;
+  const angleStep = (2 * Math.PI) / N;
+  let html = '';
+  for (let i = 0; i < N; i++) {
+    const startAngle = i * angleStep - Math.PI / 2;
+    const endAngle   = startAngle + angleStep;
+    const x1 = cx + r * Math.cos(startAngle);
+    const y1 = cy + r * Math.sin(startAngle);
+    const x2 = cx + r * Math.cos(endAngle);
+    const y2 = cy + r * Math.sin(endAngle);
+    const largeArc = angleStep > Math.PI ? 1 : 0;
+    const midAngle = startAngle + angleStep / 2;
+    const tx = cx + 88 * Math.cos(midAngle);
+    const ty = cy + 88 * Math.sin(midAngle);
+    html += `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${largeArc},1 ${x2},${y2} Z"
+               fill="${wheelColors[i]}" opacity="0.85" stroke="rgba(0,0,0,.4)" stroke-width="1"/>`;
+    html += `<text x="${tx}" y="${ty}" text-anchor="middle" dominant-baseline="middle"
+               font-size="20" style="pointer-events:none;">${wheelEmojis[i]}</text>`;
+  }
+  svg.innerHTML = html;
+}
+
+let wheelSpinning = false;
+let wheelCurrentDeg = 0;
+
+function spinRoulette() {
+  if (wheelSpinning) return;
+  wheelSpinning = true;
+  haptic([20,40,20,40,80]);
+  playWhoosh();
+  addHeat(4);
+
+  const btn = document.getElementById('spin-btn');
+  const row = document.getElementById('action-row');
+  row.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = '🎰 Drehe …';
+
+  const extraSpins = 4 + Math.random() * 4; // 4-8 full rotations
+  const targetSegment = Math.floor(Math.random() * 10);
+  const segmentDeg = 360 / 10;
+  const targetDeg = 360 - (targetSegment * segmentDeg + segmentDeg / 2);
+  const totalDeg = 360 * extraSpins + (targetDeg - (wheelCurrentDeg % 360) + 360) % 360;
+  const spinDuration = 3 + Math.random() * 1.5;
+
+  const wheelEl = document.getElementById('wheel-svg');
+  wheelEl.style.setProperty('--spin-deg', totalDeg + 'deg');
+  wheelEl.style.setProperty('--spin-duration', spinDuration + 's');
+  wheelEl.style.transform = `rotate(${wheelCurrentDeg}deg)`;
+  wheelEl.style.transition = 'none';
+
+  // Force reflow
+  wheelEl.offsetHeight;
+  wheelEl.classList.add('spinning');
+
+  setTimeout(() => {
+    wheelCurrentDeg = (wheelCurrentDeg + totalDeg) % 360;
+    wheelEl.classList.remove('spinning');
+    wheelEl.style.transition = 'none';
+    wheelEl.style.transform = `rotate(${wheelCurrentDeg}deg)`;
+    wheelSpinning = false;
+
+    currentPosition = positionPool.next();
+    document.getElementById('r-emoji').textContent = currentPosition.emoji;
+    document.getElementById('r-name').textContent = currentPosition.name;
+    document.getElementById('r-hint').textContent = currentPosition.hint;
+    row.style.display = 'flex';
+    btn.disabled = false;
+    btn.textContent = '🎰 Nochmal drehen';
+    playSuccess();
+    spawnParticles(window.innerWidth/2, window.innerHeight*.35, ['🎰','✨','💫'], 8);
+    haptic([100, 50, 100]);
+    updateHomeStats();
+  }, spinDuration * 1000 + 100);
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  JOURNAL & STREAK
+// ══════════════════════════════════════════════════════════════════
+let journal = JSON.parse(localStorage.getItem('journal') || '[]');
+const journalColors = {
+  '💕':'#a064ea','🔥':'#c9204a','🌋':'#d4a84b',
+  '💋':'#e8355c','😈':'#6488ea','🌹':'#2dd4a0'
+};
+
+function addJournalEntry() {
+  const text = document.getElementById('journal-input').value.trim();
+  if (!text) return;
+  const mood = document.getElementById('journal-mood').value;
+  const now = new Date();
+  journal.unshift({ text, mood, date: now.toISOString(), id: Date.now() });
+  localStorage.setItem('journal', JSON.stringify(journal));
+  document.getElementById('journal-input').value = '';
+  renderJournal();
+  playChime();
+  haptic([40, 60]);
+  updateStreak();
+  checkAchievements();
+  addHeat(3);
+}
+
+function deleteJournalEntry(id) {
+  journal = journal.filter(e => e.id !== id);
+  localStorage.setItem('journal', JSON.stringify(journal));
+  renderJournal();
+}
+
+function clearJournal() {
+  if (!journal.length) return;
+  if (!confirm('Alle Einträge löschen?')) return;
+  journal = []; localStorage.setItem('journal', JSON.stringify(journal));
+  renderJournal();
+}
+
+function renderJournal() {
+  const list = document.getElementById('journal-entries');
+  document.getElementById('journal-count').textContent = journal.length;
+  if (!journal.length) {
+    list.innerHTML = '<div class="journal-empty">Euer Tagebuch ist noch leer. Haltet eure heißesten Momente fest! 📓</div>';
+    return;
+  }
+  list.innerHTML = journal.map(e => {
+    const d = new Date(e.date);
+    const dateStr = d.toLocaleDateString('de-DE',{day:'numeric',month:'short',year:'numeric'}) + ' · ' + d.toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="journal-entry" style="--entry-color:${journalColors[e.mood]||'var(--gold)'}">
+      <div class="journal-entry-header">
+        <span class="journal-entry-mood">${e.mood}</span>
+        <span class="journal-entry-date">${dateStr}</span>
+        <button class="journal-entry-del" onclick="deleteJournalEntry(${e.id})">✕</button>
+      </div>
+      <div class="journal-entry-text">${e.text}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── STREAK ──
+let streakData = JSON.parse(localStorage.getItem('streakData') || '{"current":0,"best":0,"lastPlay":null}');
+
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (streakData.lastPlay === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (streakData.lastPlay === yesterday) {
+    streakData.current++;
+  } else if (streakData.lastPlay !== today) {
+    streakData.current = 1;
+  }
+  if (streakData.current > streakData.best) streakData.best = streakData.current;
+  streakData.lastPlay = today;
+  localStorage.setItem('streakData', JSON.stringify(streakData));
+  renderStreak();
+}
+
+function renderStreak() {
+  const el = document.getElementById('streak-num');
+  const bestEl = document.getElementById('streak-best');
+  if (el) el.textContent = streakData.current;
+  if (bestEl) bestEl.textContent = `Rekord: ${streakData.best} Tage`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PAUSE / NOTFALL
+// ══════════════════════════════════════════════════════════════════
+let pauseBtn;
+
+function showPauseBtn(show) {
+  pauseBtn = pauseBtn || document.getElementById('pause-float-btn');
+  if (!pauseBtn) return;
+  pauseBtn.classList.toggle('visible', show);
+}
+
+function openPause() {
+  haptic([100, 50, 100]);
+  stopTimer();
+  document.getElementById('pause-overlay').classList.add('active');
+}
+
+function closePause() {
+  document.getElementById('pause-overlay').classList.remove('active');
+  haptic([50]);
+}
+
+function endGame() {
+  document.getElementById('pause-overlay').classList.remove('active');
+  showPauseBtn(false);
+  goHome();
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  SOUND PATCHES
+// ══════════════════════════════════════════════════════════════════
+const _origSoundNextTod = nextTod;
+// Already patched above; just add sounds
+const __origNextTod = nextTod;
+nextTod = function() {
+  playChime();
+  __origNextTod();
+};
+
+const _origSoundNewChall = newChallenge;
+newChallenge = function() {
+  playWhoosh();
+  _origSoundNewChall();
+};
+
+const _origSoundRoll = rollDice;
+rollDice = function() {
+  playDice();
+  _origSoundRoll();
+};
+
+const _origSoundAccept = acceptPosition;
+acceptPosition = function() {
+  playSuccess();
+  _origSoundAccept();
+};
+
+const _origSoundDecline = declinePosition;
+declinePosition = function() {
+  playError();
+  _origSoundDecline();
+};
+
+const _origTimerToggle = toggleTimer;
+toggleTimer = function() {
+  playTick();
+  _origTimerToggle();
+};
+
+// Patch timer tick to play sound
+const __timerDisplay = updateTimerDisplay;
+updateTimerDisplay = function() {
+  __timerDisplay();
+  if (timerRunning && timerSeconds > 0 && timerSeconds <= 5) {
+    playCountdown();
+  } else if (timerSeconds === 0 && timerRunning === false && _lastTimerSeconds > 0) {
+    // Timer done already handled in previous patch
+  }
+};
+
+// Patch showAchievementToast to also play sound
+const _origToast = showAchievementToast;
+showAchievementToast = function(icon, text) {
+  playUnlock();
+  _origToast(icon, text);
+};
+
+// Show/hide pause button based on screen
+const _origShowScreen = showScreen;
+showScreen = function(id) {
+  _origShowScreen(id);
+  const gameScreens = ['roulette','truthdare','challenges','dice-screen','wishbox','striptease','heisskalte','ki-gen','fantasie'];
+  showPauseBtn(gameScreens.includes(id));
+};
+
+// ══════════════════════════════════════════════════════════════════
+//  ADDITIONAL ACHIEVEMENTS
+// ══════════════════════════════════════════════════════════════════
+achievements.push(
+  { id:'journal_1',  icon:'📓', name:'Erstes Tagebuch',   condition: () => journal.length >= 1 },
+  { id:'journal_5',  icon:'📚', name:'5 Momente',          condition: () => journal.length >= 5 },
+  { id:'streak_3',   icon:'🔥', name:'3 Tage Streak',      condition: () => streakData.current >= 3 },
+  { id:'streak_7',   icon:'❤️‍🔥', name:'Eine Woche!',       condition: () => streakData.current >= 7 },
+  { id:'maxheat',    icon:'💥', name:'Maximum Hitze',      condition: () => heatLevel >= 100 },
+  { id:'all_modes',  icon:'🎮', name:'Alles ausprobiert',  condition: () => globalRound >= 30 },
+);
+
+// ══════════════════════════════════════════════════════════════════
+//  INIT NEW FEATURES
+// ══════════════════════════════════════════════════════════════════
+renderJournal();
+renderStreak();
+updateStreak();
+// Init wheel after DOM ready
+setTimeout(initWheel, 100);
+
+// PWA Manifest
+function haptic(pattern = [25]) {
+  try { if (navigator.vibrate) navigator.vibrate(pattern); } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  HITZE-METER SYSTEM
+// ══════════════════════════════════════════════════════════════════
+let heatLevel = parseInt(localStorage.getItem('heatLevel') || '0');
+
+const heatStages = [
+  { min:0,  max:10,  emoji:'💙', label:'Kalt — Spiel beginnt gerade',      pos:'0%' },
+  { min:11, max:25,  emoji:'💜', label:'Lauwarm — Die Stimmung steigt',     pos:'20%' },
+  { min:26, max:45,  emoji:'💛', label:'Warm — Es wird schön kuschelig …',  pos:'42%' },
+  { min:46, max:65,  emoji:'🧡', label:'Heiß — Die Luft brennt schon!',     pos:'64%' },
+  { min:66, max:80,  emoji:'❤️', label:'Sehr heiß — Dampf steigt auf!',     pos:'75%' },
+  { min:81, max:100, emoji:'🔥', label:'Siedend heiß — Keine Kontrolle mehr!', pos:'100%' },
+];
+
+function getHeatStage() {
+  return heatStages.find(s => heatLevel >= s.min && heatLevel <= s.max) || heatStages[0];
+}
+
+function addHeat(amount) {
+  const prev = getHeatStage();
+  heatLevel = Math.min(100, heatLevel + amount);
+  localStorage.setItem('heatLevel', heatLevel);
+  updateHeatMeter();
+  const next = getHeatStage();
+  // Achievement when stage changes
+  if (prev !== next) {
+    checkAchievements();
+    haptic([50, 30, 80]);
+    spawnParticles(window.innerWidth/2, window.innerHeight/2, next.emoji, 6);
+  }
+}
+
+function updateHeatMeter() {
+  const fill = document.getElementById('heat-fill');
+  const label = document.getElementById('heat-label');
+  const pct = document.getElementById('heat-pct');
+  if (!fill) return;
+  const stage = getHeatStage();
+  fill.style.width = heatLevel + '%';
+  // Shift gradient based on heat
+  fill.style.backgroundPosition = (heatLevel * 2) + '% center';
+  fill.classList.toggle('hot', heatLevel >= 66);
+  label.textContent = stage.emoji + ' ' + stage.label;
+  pct.textContent = heatLevel + '%';
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PARTICLE EFFECTS
+// ══════════════════════════════════════════════════════════════════
+function spawnParticles(x, y, emojis, count = 8) {
+  const arr = Array.isArray(emojis) ? emojis : [emojis];
+  for (let i = 0; i < count; i++) {
+    const el = document.createElement('div');
+    el.className = 'particle';
+    const dx = (Math.random() - .5) * 220;
+    const dy = -(Math.random() * 180 + 60);
+    el.style.setProperty('--dx', dx + 'px');
+    el.style.setProperty('--dy', dy + 'px');
+    el.style.left = (x + (Math.random()-0.5)*60) + 'px';
+    el.style.top  = y + 'px';
+    el.textContent = arr[Math.floor(Math.random() * arr.length)];
+    el.style.animationDuration = (.5 + Math.random() * .5) + 's';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1000);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  ACHIEVEMENT SYSTEM
+// ══════════════════════════════════════════════════════════════════
+const achievements = [
+  { id:'first_game',  icon:'🎉', name:'Erstes Spiel',       condition: () => globalRound >= 1 },
+  { id:'10_rounds',   icon:'🎭', name:'10 Runden',          condition: () => globalRound >= 10 },
+  { id:'warm',        icon:'💛', name:'Warm geworden',      condition: () => heatLevel >= 26 },
+  { id:'hot',         icon:'🔥', name:'Wirklich heiß',      condition: () => heatLevel >= 66 },
+  { id:'on_fire',     icon:'🌋', name:'Außer Kontrolle',    condition: () => heatLevel >= 90 },
+  { id:'5_wishes',    icon:'💌', name:'5 Wünsche',          condition: () => wishes.length >= 5 },
+  { id:'truth_3',     icon:'🤫', name:'3 Wahrheiten',       condition: () => todCount.wahrheit >= 3 },
+  { id:'dare_5',      icon:'💪', name:'5 Pflichten',        condition: () => todCount.pflicht >= 5 },
+  { id:'strip',       icon:'👗', name:'Strip-Profi',        condition: () => (stripScores[0]+stripScores[1]) >= 3 },
+  { id:'ki_user',     icon:'🤖', name:'KI-Erkunder',        condition: () => kiGenerations >= 3 },
+  { id:'fantasy',     icon:'🃏', name:'Fantasie-Entdecker', condition: () => fantasyDraws >= 2 },
+  { id:'spontan',     icon:'⚡', name:'Spontan-Champion',   condition: () => spontanCount >= 3 },
+];
+
+let unlockedAchievements = JSON.parse(localStorage.getItem('achievements') || '[]');
+let kiGenerations = parseInt(localStorage.getItem('kiGen') || '0');
+let fantasyDraws = parseInt(localStorage.getItem('fantasyDraws') || '0');
+let spontanCount = parseInt(localStorage.getItem('spontanCount') || '0');
+let dareCount = parseInt(localStorage.getItem('dareCount') || '0');
+let gameSince = localStorage.getItem('gameSince') || null;
+
+function checkAchievements() {
+  achievements.forEach(a => {
+    if (!unlockedAchievements.includes(a.id) && a.condition()) {
+      unlockedAchievements.push(a.id);
+      localStorage.setItem('achievements', JSON.stringify(unlockedAchievements));
+      showAchievementToast(a.icon, a.name);
+    }
+  });
+}
+
+function showAchievementToast(icon, text) {
+  const toast = document.getElementById('ach-toast');
+  document.getElementById('ach-toast-icon').textContent = icon;
+  document.getElementById('ach-toast-text').textContent = '🏆 Erfolg: ' + text;
+  toast.classList.remove('hide');
+  toast.classList.add('show');
+  haptic([50, 100, 50, 100, 300]);
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+  }, 3000);
+}
+
+function renderAchievements() {
+  const grid = document.getElementById('ach-grid');
+  if (!grid) return;
+  grid.innerHTML = achievements.map(a => `
+    <div class="ach-item ${unlockedAchievements.includes(a.id) ? 'unlocked' : ''}">
+      <div class="ach-item-icon">${a.icon}</div>
+      <div class="ach-item-name">${a.name}</div>
+    </div>
+  `).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  STATS
+// ══════════════════════════════════════════════════════════════════
+function updateStats() {
+  document.getElementById('stat-rounds').textContent = globalRound;
+  document.getElementById('stat-heat').textContent = heatLevel + '%';
+  document.getElementById('stat-dares').textContent = todCount.pflicht + dareCount;
+  document.getElementById('stat-wishes').textContent = wishes.length;
+  const stage = getHeatStage();
+  const statsLabel = document.getElementById('stats-heat-label');
+  if (statsLabel) statsLabel.textContent = stage.emoji + ' ' + stage.label;
+  const statsFill = document.getElementById('stats-heat-fill');
+  if (statsFill) statsFill.style.width = heatLevel + '%';
+  if (gameSince) {
+    const d = new Date(gameSince);
+    document.getElementById('stats-since').textContent = 'Gespielt seit: ' + d.toLocaleDateString('de-DE', {day:'numeric',month:'long',year:'numeric'});
+  }
+  renderAchievements();
+}
+
+function resetStats() {
+  if (!confirm('Alle Statistiken zurücksetzen?')) return;
+  heatLevel = 0; globalRound = 0;
+  todCount = { wahrheit: 0, pflicht: 0 };
+  stripScores = [0, 0];
+  kiGenerations = 0; fantasyDraws = 0; spontanCount = 0; dareCount = 0;
+  unlockedAchievements = []; gameSince = null;
+  ['heatLevel','achievements','kiGen','fantasyDraws','spontanCount','gameSince'].forEach(k => localStorage.removeItem(k));
+  updateHeatMeter();
+  updateStats();
+  haptic([100]);
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  FANTASIE-KARTEN
+// ══════════════════════════════════════════════════════════════════
+const fantasyScenarios = [
+  // ── SANFT (lvl:1) ──
+  { lvl:1, emoji:'💆', title:'Masseur & Klientin', setting:'Ein entspannter Abend – er bietet eine professionelle Massage an. Doch die Grenzen verschwimmen.',
+    roles:['💆 Masseur', '🌸 Klientin'],
+    start:'„Leg dich einfach hin und entspann dich … ich kümmere mich um alles."',
+    rules:['Kein direktes Küssen in den ersten 3 Minuten – nur Berührungen.', 'Der Masseur bestimmt wo als nächstes massiert wird.', 'Klientin darf reagieren aber muss passiv bleiben.']
+  },
+  { lvl:1, emoji:'☕', title:'Erster Abend', setting:'Ihr habt euch gerade erst kennengelernt – dieser Abend könnte alles verändern.',
+    roles:['😊 Zögerlicher', '💋 Verführerischer'],
+    start:'„Ich dachte eigentlich, ich bleibe nicht lange … aber irgendwie kann ich nicht gehen."',
+    rules:['Alles passiert sehr langsam und bewusst.', 'Jeder Schritt braucht eine unausgesprochene Einladung.', 'Kein Drängen – nur Anziehung folgen.']
+  },
+  { lvl:1, emoji:'📚', title:'Bibliothek', setting:'Spät abends allein in der Bibliothek. Die Stille macht jeden Atemzug lauter.',
+    roles:['📖 Besucher:in', '📚 Bibliothekar:in'],
+    start:'„Wir sollten eigentlich leise sein … aber ich kann nicht aufhören dich anzusehen."',
+    rules:['Kein Sprechen über Flüsterton – jedes laute Wort kostet einen Kuss.', 'Berührungen nur wenn niemand es sehen könnte.', 'Wer zuerst lacht, muss eine Aufgabe erfüllen.']
+  },
+  // ── NORMAL (lvl:2 or none) ──
+  { emoji:'🏨', title:'Hotel-Affäre', setting:'Ein luxuriöses Hotel, zwei Zimmer, eine Tür. Die verbotene Neugier ist zu groß.',
+    roles:['🎩 Hotelgast', '🛎 Zimmermädchen/Concierge'],
+    start:'Ein Klopfen an der Tür um Mitternacht. „Ich dachte, Sie brauchen vielleicht … etwas."',
+    rules:['Keine echten Namen – nur Rollen spielen.', 'Einer gibt Anweisungen, der andere gehorcht.', 'Das Spiel endet erst wenn beide aus der Rolle fallen.']
+  },
+  { emoji:'👔', title:'Chef & Neue:r', setting:'Nachdem alle gegangen sind bleibt die neue Mitarbeiterin noch im Büro. Der Chef kommt zurück.',
+    roles:['💼 Chef:in', '🌟 Neue:r Mitarbeiter:in'],
+    start:'„Sie arbeiten noch so spät? Das fällt mir auf … und noch etwas anderes auch."',
+    rules:['Chef:in gibt Anweisungen – Mitarbeiter:in führt aus ohne Widerspruch.', 'Das Büro-Setting beibehalten: Schreibtisch, Stuhl, etc.', 'Kein echtes Verlassen der Rollen bis das „Meeting" beendet ist.']
+  },
+  { emoji:'🏋️', title:'Personal Trainer', setting:'Die Trainingsstunde ist vorbei, die anderen Kunden weg. Nur noch zwei.',
+    roles:['💪 Trainer:in', '🏃 Klient:in'],
+    start:'„Deine Technik ist fast perfekt … fast. Komm, ich zeig dir wie es sich wirklich richtig anfühlt."',
+    rules:['Trainer demonstriert – Klient:in folgt jeder körperlichen Anweisung.', 'Alle Übungen haben einen körperlichen Kontakt.', 'Klient:in muss laut zählen.']
+  },
+  { emoji:'🎭', title:'Verhör', setting:'Eine Polizeistation nach Mitternacht. Die Suspekte ist verdächtig schön, der Ermittler zu neugierig.',
+    roles:['🚔 Ermittler:in', '😈 Verdächtige:r'],
+    start:'„Sie können jederzeit gehen … aber ich glaube, Sie wollen gar nicht wirklich weg."',
+    rules:['Verhör-Atmosphäre beibehalten: Fragen, Antworten, Spannung.', 'Verdächtige:r darf lügen – Ermittler:in muss die Wahrheit herausfinden.', 'Jede entdeckte Lüge kostet eine Pflicht.']
+  },
+  { emoji:'🩺', title:'Arzt & Patient', setting:'Eine gründliche Abendsprechstunde. Der Arzt ist sehr … gewissenhaft.',
+    roles:['🩺 Arzt/Ärztin', '🩹 Patient:in'],
+    start:'„Ich muss Sie an mehreren Stellen untersuchen … das kann etwas dauern."',
+    rules:['Patient:in folgt allen Anweisungen des Arztes/der Ärztin widerspruchslos.', 'Arzt/Ärztin ist professionell – aber sehr gründlich.', 'Diagnose: „Sie brauchen intensive Behandlung."']
+  },
+  { emoji:'📸', title:'Fotograf & Model', setting:'Ein privates Shooting nach Einbruch der Dunkelheit. Die Kamera läuft nicht mehr.',
+    roles:['📷 Fotograf:in', '💃 Model'],
+    start:'„Das letzte Bild war das beste … aber ich glaube, die wirklich guten Momente kommen jetzt."',
+    rules:['Fotograf:in gibt Regieanweisungen: Pose, Ausdruck, Position.', 'Model gehorcht und übertreibt jeden Ausdruck.', 'Jede neue „Szene" beginnt mit dem Satz: „Kamera läuft."']
+  },
+  { emoji:'🌊', title:'Schiffbruch', setting:'Nur zwei Menschen, eine verlassene Insel, keine Regeln. Die Zivilisation ist weit weg.',
+    roles:['🧭 Entdecker:in', '🌸 Gestrandete:r'],
+    start:'„Es gibt keine Regeln hier. Keine Konventionen. Nur uns beide … und was wir wollen."',
+    rules:['Alle gesellschaftlichen Hemmungen sind aufgehoben.', 'Keiner darf nein sagen außer bei echtem Unbehagen.', 'Alles passiert wie zum ersten Mal – keine Gewohnheiten.']
+  },
+  { emoji:'🔮', title:'Zauberer & Schülerin', setting:'Ein magisches Ritual, das Macht verleiht. Doch die Magie hat ihren Preis.',
+    roles:['🔮 Zauberer:in', '⭐ Lehrling'],
+    start:'„Um diese Macht zu erlangen … musst du mir zuerst vollständig vertrauen."',
+    rules:['Zauberer:in hat absolute Autorität über den Lehrling.', 'Jede Anweisung beginnt mit einer geheimnisvollen Geste.', 'Kein Lachen – die Magie bricht sonst.']
+  },
+  // ── WILD (lvl:3) ──
+  { lvl:3, emoji:'👑', title:'Herrscher:in & Dienende:r', setting:'Keine Demokratie, kein Kompromiss. Hier gibt es nur Macht und Hingabe.',
+    roles:['👑 Herrscher:in', '🙇 Dienende:r'],
+    start:'„Du dienst mir heute Abend. Vollständig und ohne Zögern. Verstanden?"',
+    rules:['Dienende:r darf nur sprechen wenn gefragt.', 'Jede Anweisung wird sofort und vollständig ausgeführt.', 'Kein Widerspruch – Gehorsam ist die Regel.']
+  },
+  { lvl:3, emoji:'🏴‍☠️', title:'Pirat & Gefangene:r', setting:'Das Schiff schwankt. Der Pirat hat alles in der Hand – und die Gefangene auch.',
+    roles:['🏴‍☠️ Pirat:in', '⚓ Gefangene:r'],
+    start:'„Du bist jetzt meine:r. Was ich sage, passiert. Was ich will, bekomme ich."',
+    rules:['Gefangene:r darf Widerstand spielen – aber am Ende gibt es keine Flucht.', 'Pirat:in bestimmt jede Position und jede Aktion.', 'Alles geschieht auf Befehl.']
+  },
+  { lvl:3, emoji:'🎰', title:'Casino-Verwette', setting:'Das letzte Spiel der Nacht. Der Einsatz: alles. Die Gewinnerin: unwiderstehlich.',
+    roles:['🃏 Sieger:in', '💎 Verlierer:in'],
+    start:'„Du hast verloren. Jetzt bestimme ich die Auszahlung – Stück für Stück."',
+    rules:['Verlierer:in erfüllt jede Forderung des Siegers/der Siegerin.', 'Jede Runde wird ausgelost (Münze werfen = Wechsel der Rollen).', 'Wer sich weigert, verliert den nächsten Einsatz doppelt.']
+  },
+];
+
+let currentFantasyCard = null;
+let fantasyFlipped = false;
+
+function openFantasie() {
+  if (!gameSince) { gameSince = new Date().toISOString(); localStorage.setItem('gameSince', gameSince); }
+  showScreen('fantasie');
+  newFantasyCard();
+}
+
+function newFantasyCard() {
+  haptic([30, 50, 80]);
+  addHeat(5);
+  fantasyDraws++;
+  localStorage.setItem('fantasyDraws', fantasyDraws);
+
+  const filtered = fantasyScenarios.filter(s => {
+    if (!s.lvl) return true;
+    if (gameIntensity === 1) return s.lvl === 1;
+    if (gameIntensity === 2) return !s.lvl || s.lvl <= 2;
+    return true;
+  });
+  currentFantasyCard = filtered[Math.floor(Math.random() * filtered.length)];
+
+  // Reset to front face
+  const card = document.getElementById('fantasy-card-3d');
+  card.classList.remove('flipped');
+  fantasyFlipped = false;
+
+  // Populate back
+  document.getElementById('fc-emoji').textContent = currentFantasyCard.emoji;
+  document.getElementById('fc-emoji-front').textContent = currentFantasyCard.emoji;
+  document.getElementById('fc-title').textContent = currentFantasyCard.title;
+  document.getElementById('fc-setting').textContent = currentFantasyCard.setting;
+  document.getElementById('fc-roles').innerHTML = currentFantasyCard.roles.map(r =>
+    `<span class="fantasy-role">${r}</span>`).join('');
+  document.getElementById('fc-start').textContent = currentFantasyCard.start;
+  document.getElementById('fc-rules').innerHTML = currentFantasyCard.rules.map((r, i) =>
+    `<div class="fantasy-rule"><span class="fantasy-rule-num">${i+1}.</span><span>${r}</span></div>`).join('');
+
+  const note = document.getElementById('fc-intensity-note');
+  if (currentFantasyCard.lvl === 1) note.textContent = '🌹 Sanftes Szenario';
+  else if (currentFantasyCard.lvl === 3) note.textContent = '🌋 Intensives Szenario';
+  else note.textContent = '🔥 Standard-Szenario';
+
+  checkAchievements();
+}
+
+function flipFantasyCard() {
+  if (!currentFantasyCard) return;
+  haptic([50]);
+  const card = document.getElementById('fantasy-card-3d');
+  fantasyFlipped = !fantasyFlipped;
+  card.classList.toggle('flipped', fantasyFlipped);
+  if (fantasyFlipped) { addHeat(3); spawnParticles(window.innerWidth/2, window.innerHeight*.3, ['✨','💋','🌹'], 5); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  KI GENERATOR
+// ══════════════════════════════════════════════════════════════════
+let kiMood = 1;
+const kiTemplates = {
+  1: [ // Romantisch
+    "Legt euch eng aneinander und [AKTION1] euch gegenseitig [KÖRPER] für [ZEIT]. Kein Wort, nur Wärme und [STIMMUNG].",
+    "[NAME1] liegt auf dem Rücken, [NAME2] [AKTION2] langsam [KÖRPER] und flüstert dabei [ANZAHL] Dinge die er/sie an [NAME1] liebt.",
+    "Schaut euch [ZEIT] in die Augen ohne zu sprechen. Dann [AKTION1] ihr euch gleichzeitig [KÖRPER] – [STIMMUNG] und bewusst.",
+    "Einer [AKTION3] den anderen vollständig aus – [KÖRPER] wird zuerst enthüllt. [STIMMUNG], keine Eile.",
+    "[NAME2] [AKTION2] [NAME1] an [ANZAHL] Körperstellen seiner/ihrer Wahl. [STIMMUNG] und [STIMMUNG] – kein Wort dazwischen.",
+  ],
+  2: [ // Heiß
+    "[NAME1] [AKTION2] [NAME2] oral für genau [ZEIT] – gleichmäßig, fokussiert, kein Stopp. [NAME2] darf stöhnen aber nicht sprechen.",
+    "Wechselt im 30-Sekunden-Takt zwischen [AKTION1] und [AKTION2]. Wer zuletzt stöhnt gewinnt – und darf [ANZAHL] Wünsche äußern.",
+    "[NAME2] liegt passiv – [NAME1] erkundet [KÖRPER] und [KÖRPER] für [ZEIT]. Kein Innehalten bis Zeit abgelaufen.",
+    "Gegenseitig stimulieren gleichzeitig: [NAME1] [AKTION2] [NAME2]s [KÖRPER], [NAME2] [AKTION2] [NAME1]s [KÖRPER]. Synchron und [STIMMUNG].",
+    "[AKTION3] euch in [ZEIT] komplett. Dann: [NAME2] knie vor [NAME1] und [AKTION2] ihn/sie für genau [ZEIT].",
+  ],
+  3: [ // Wild
+    "[NAME1] hat die vollständige Kontrolle für [ZEIT]. [NAME2] folgt jeder Anweisung ohne Fragen – alles ist erlaubt.",
+    "Wechselt [ANZAHL]× die Position ohne anzuhalten. Letzter Wechsel: [NAME2] oben, [NAME1] bestimmt das Tempo mit Händen auf den Hüften.",
+    "[NAME2] [AKTION2] [NAME1] für [ZEIT] – dann Stopp kurz vor dem Höhepunkt. [ANZAHL]× wiederholen. Dann erst darf er/sie.",
+    "Beide kommen einander gleichzeitig näher ohne das Ziel zu erreichen – [ZEIT] maximale Qual, pure [STIMMUNG].",
+    "[NAME1] gibt [ANZAHL] explizite Anweisungen hintereinander. [NAME2] führt jede aus sofort und vollständig – kein Zögern.",
+  ],
+  4: [ // Extrem
+    "Kein Limit, kein Wort, kein Stopp – [ZEIT] volles Programm. Alles was ihr je wolltet, startet JETZT.",
+    "[NAME2] darf [ANZAHL] Minuten lang alles – [NAME1] führt alles aus ohne Widerspruch. Dann Rollentausch, nochmals [ANZAHL] Minuten.",
+    "Edging-Challenge: [ANZAHL]× kurz vor den Höhepunkt bringen – abwechselnd. Erst danach darf EINER kommen, der andere wartet noch.",
+    "[NAME1] befiehlt – [NAME2] gehorcht – keine Grenze außer Schmerz. Alle [ANZAHL] Anweisungen werden in Folge ausgeführt.",
+    "Alles was ihr noch nie ausprobiert habt: jetzt. [ZEIT], keine Angst, kein Nachdenken – nur [STIMMUNG] pur.",
+  ],
+};
+
+const kiVars = {
+  AKTION1: ['küsst','streichelt','berührt','massiert','erkundet','verwöhnt','leckt','liebt'],
+  AKTION2: ['verwöhnt','stimuliert','massiert','berührt','erkundet','leckt','küsst'],
+  AKTION3: ['zieht','schält','zieht langsam'],
+  KÖRPER: ['Nacken','Hals','Brust','Bauch','Rücken','Innenschenkel','Hüften','Schultern','Ohren','Lippen'],
+  STIMMUNG: ['langsam','bewusst','leidenschaftlich','zärtlich','intensiv','hingebungsvoll','wild','heiß'],
+  ZEIT: ['60 Sekunden','2 Minuten','3 Minuten','90 Sekunden','4 Minuten'],
+  ANZAHL: ['3','4','5','2','6'],
+};
+
+function selectKIMood(m) {
+  kiMood = m;
+  document.querySelectorAll('.ki-mood-btn').forEach((b,i) =>
+    b.classList.toggle('active', i+1 === m)
+  );
+  haptic([20]);
+}
+
+function toggleAPISection() {
+  const sec = document.getElementById('ki-api-section');
+  sec.classList.toggle('open');
+}
+
+async function generateKI() {
+  haptic([30, 50, 80]);
+  addHeat(6);
+  kiGenerations++;
+  localStorage.setItem('kiGen', kiGenerations);
+  if (!gameSince) { gameSince = new Date().toISOString(); localStorage.setItem('gameSince', gameSince); }
+
+  const btn = document.getElementById('btn-ki-gen');
+  const resultText = document.getElementById('ki-result-text');
+  const placeholder = document.getElementById('ki-placeholder');
+  const resultCard = document.getElementById('ki-result-card');
+  const apiKey = document.getElementById('ki-api-key').value.trim();
+  const keywords = document.getElementById('ki-keywords').value.trim();
+  const modeBadge = document.getElementById('ki-mode-badge');
+
+  btn.disabled = true;
+  placeholder.style.display = 'none';
+  resultText.style.display = 'none';
+  resultCard.innerHTML += '<div class="ki-spinner" id="ki-spinner"></div>';
+
+  let result = '';
+  if (apiKey) {
+    modeBadge.textContent = '🤖 Echter Claude KI-Modus';
+    modeBadge.className = 'ki-mode-badge real';
+    result = await callAnthropicAPI(kiMood, keywords, apiKey);
+  } else {
+    modeBadge.textContent = 'Lokal-Modus';
+    modeBadge.className = 'ki-mode-badge';
+    await new Promise(r => setTimeout(r, 900 + Math.random()*600)); // simulate generation
+    result = generateLocal(kiMood, keywords);
+  }
+
+  // Remove spinner
+  const spinner = document.getElementById('ki-spinner');
+  if (spinner) spinner.remove();
+
+  // Show result with animation
+  resultText.style.display = 'block';
+  resultText.textContent = result;
+  resultText.style.animation = 'none';
+  setTimeout(() => { resultText.style.animation = 'typeOut .5s ease'; }, 10);
+
+  btn.disabled = false;
+  spawnParticles(window.innerWidth/2, window.innerHeight*.5, ['🤖','✨','💋'], 6);
+  checkAchievements();
+}
+
+function generateLocal(mood, keywords) {
+  const templates = kiTemplates[mood];
+  let tplText = templates[Math.floor(Math.random() * templates.length)];
+
+  // Replace vars
+  Object.keys(kiVars).forEach(key => {
+    const arr = kiVars[key];
+    while (tplText.includes('['+key+']')) {
+      tplText = tplText.replace('['+key+']', arr[Math.floor(Math.random()*arr.length)]);
+    }
+  });
+
+  // Replace player names
+  tplText = tplText.replace(/\[NAME1\]/g, players.p1.name).replace(/\[NAME2\]/g, players.p2.name);
+
+  // Append keywords hint
+  if (keywords) {
+    const hints = [`Eingebaut: ${keywords}.`, `Besonderer Fokus: ${keywords}.`, `Thema des Abends: ${keywords}.`];
+    tplText += ' ' + hints[Math.floor(Math.random()*hints.length)];
+  }
+
+  const moodTitles = {1:'💕 Romantische Challenge:', 2:'🔥 Heiße Challenge:', 3:'🌋 Wilde Challenge:', 4:'💥 Extreme Challenge:'};
+  return moodTitles[mood] + '\n\n' + tplText;
+}
+
+async function callAnthropicAPI(mood, keywords, apiKey) {
+  const moodNames = {1:'romantisch und zärtlich', 2:'heiß und leidenschaftlich', 3:'wild und explizit', 4:'extrem und ohne Hemmungen'};
+  const prompt = `Du bist ein Assistent für ein Erwachsenen-Paare-Spiel. Generiere EINE einzigartige, explizite erotische Challenge auf Deutsch für das Paar ${players.p1.name} und ${players.p2.name}.
+
+Stimmung: ${moodNames[mood]}
+${keywords ? 'Stichworte: ' + keywords : ''}
+
+Anforderungen:
+- Direkt und konkret, keine Umschreibungen
+- 2-4 Sätze lang
+- Beginne mit dem Stimmungstitel (z.B. "🔥 Heiße Challenge:")
+- Verwende die echten Namen ${players.p1.name} und ${players.p2.name}
+- Nur die Challenge, kein Kommentar, keine Erklärung
+
+Antworte NUR mit der Challenge.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await resp.json();
+    if (data.content && data.content[0]) return data.content[0].text;
+    return '⚠️ API-Fehler: ' + (data.error?.message || 'Unbekannter Fehler');
+  } catch(e) {
+    return '⚠️ Verbindungsfehler. Bitte API-Key prüfen.';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PATCH EXISTING FUNCTIONS WITH HAPTIC + HEAT
+// ══════════════════════════════════════════════════════════════════
+const _origSpin = spinRoulette;
+spinRoulette = function() { haptic([20,40,20,40,80]); _origSpin(); };
+
+const _origAccept = acceptPosition;
+acceptPosition = function() { haptic([100]); addHeat(5); _origAccept(); };
+
+const _origDecline = declinePosition;
+declinePosition = function() { haptic([200,80,200]); addHeat(2); _origDecline(); };
+
+const _origNextTod = nextTod;
+nextTod = function() {
+  haptic([25]);
+  const mode = todMode === 'mix' ? (Math.random()<.5?'wahrheit':'pflicht') : todMode;
+  if (mode === 'pflicht') { dareCount++; localStorage.setItem('dareCount', dareCount); addHeat(7); }
+  else addHeat(3);
+  _origNextTod();
+  checkAchievements();
+};
+
+const _origRoll = rollDice;
+rollDice = function() { haptic([20,30,40,60,100]); addHeat(2); _origRoll(); };
+
+const _origAdd = addWish;
+addWish = function() { haptic([40]); _origAdd(); checkAchievements(); };
+
+const _origDraw = drawWish;
+drawWish = function() { haptic([80]); addHeat(4); _origDraw(); };
+
+const _origStrip = stripResult;
+stripResult = function(success) {
+  if (!success) { haptic([180,80]); addHeat(5); }
+  else haptic([30]);
+  _origStrip(success);
+};
+
+const _origNewChallenge = newChallenge;
+newChallenge = function() { haptic([40]); addHeat(4); _origNewChallenge(); };
+
+const _origToggleTimer = toggleTimer;
+toggleTimer = function() {
+  if (!timerRunning) haptic([60]);
+  else haptic([25]);
+  _origToggleTimer();
+};
+
+// Patch timer done sound
+const _origUpdateTimer = updateTimerDisplay;
+let _lastTimerSeconds = -1;
+function updateTimerDisplay() {
+  _origUpdateTimer();
+  if (timerSeconds === 0 && _lastTimerSeconds > 0) {
+    haptic([120,60,120,60,300]);
+    addHeat(8);
+    spawnParticles(window.innerWidth/2, window.innerHeight*.4, ['🔥','⏱️','💥'], 10);
+    checkAchievements();
+  }
+  _lastTimerSeconds = timerSeconds;
+}
+
+const _origSpontan = openSpontanModus;
+openSpontanModus = function() {
+  haptic([50,30,100]);
+  spontanCount++;
+  localStorage.setItem('spontanCount', spontanCount);
+  _origSpontan();
+  checkAchievements();
+};
+
+const _origStartGame = startGame;
+startGame = function() {
+  haptic([80]);
+  if (!gameSince) { gameSince = new Date().toISOString(); localStorage.setItem('gameSince', gameSince); }
+  _origStartGame();
+};
 
 // PWA Manifest
 const manifest = {
